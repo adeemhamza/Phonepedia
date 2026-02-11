@@ -3,289 +3,422 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apple Anatomy Lab</title>
+    <title>iPhone Generational Showcase</title>
     <style>
+        /* --- RESET & BASICS --- */
         :root {
-            --bg-body: #fbfbfd;
-            --bg-sidebar: rgba(255, 255, 255, 0.8);
-            --card-bg: #ffffff;
-            --accent: #0071e3;
-            --text-main: #1d1d1f;
-            --text-sec: #86868b;
-            --border: #d2d2d7;
-            --shadow: 0 4px 20px rgba(0,0,0,0.04);
+            --bg-color: #fbfbfd;
+            --text-color: #1d1d1f;
+            --accent-blue: #0071e3;
+            --panel-bg: rgba(255, 255, 255, 0.8);
+            --blur: 20px;
+            --ease-apple: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body {
             margin: 0;
-            font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-body);
-            color: var(--text-main);
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-            -webkit-font-smoothing: antialiased;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
         }
 
-        /* --- Sidebar Styling --- */
-        #sidebar {
-            width: 280px;
-            height: 100%;
-            background: var(--bg-sidebar);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-right: 1px solid rgba(0,0,0,0.1);
-            padding: 40px 25px;
+        /* --- HEADER --- */
+        header {
             display: flex;
-            flex-direction: column;
+            justify-content: center;
+            padding: 20px 0;
+            background: rgba(251, 251, 253, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
             z-index: 100;
-            transition: transform 0.3s ease;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
-        .brand {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 40px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .brand span { color: var(--accent); }
-
-        .nav-label {
-            font-size: 12px;
+        .nav-logo {
             font-weight: 600;
-            color: var(--text-sec);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
+            font-size: 1.2rem;
+            letter-spacing: -0.5px;
         }
 
-        .model-btn {
-            width: 100%;
-            padding: 16px;
+        /* --- HERO --- */
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -1.5px;
             margin-bottom: 10px;
-            border: none;
-            border-radius: 12px;
-            background: transparent;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 500;
-            color: var(--text-main);
-            text-align: left;
-            transition: all 0.2s ease;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #86868b;
+            font-weight: 400;
+            max-width: 600px;
+            margin: 0 auto 40px auto;
+        }
+
+        /* --- SEGMENTED TABS --- */
+        .tabs-container {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            justify-content: center;
+            margin-bottom: 50px;
         }
 
-        .model-btn:hover { background: rgba(0,0,0,0.03); }
-        
-        .model-btn.active { 
-            background: var(--accent); 
-            color: white; 
-            box-shadow: 0 4px 15px rgba(0, 113, 227, 0.3);
-        }
-
-        .model-btn::after { content: '→'; opacity: 0; transition: 0.2s; }
-        .model-btn.active::after { opacity: 1; }
-
-        /* --- Main Content --- */
-        #main-content {
-            flex-grow: 1;
-            padding: 50px 60px;
-            overflow-y: auto;
+        .segmented-control {
+            background: #e8e8ed;
+            padding: 4px;
+            border-radius: 99px;
+            display: inline-flex;
             position: relative;
         }
 
-        header { margin-bottom: 50px; animation: fadeIn 0.8s ease; }
-        h1 { font-size: 40px; font-weight: 700; margin: 0 0 10px 0; letter-spacing: -0.5px; }
-        p.desc { color: var(--text-sec); font-size: 19px; line-height: 1.5; max-width: 600px; margin: 0; }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 10px 24px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 99px;
+            position: relative;
+            z-index: 2;
+            transition: color 0.3s ease;
+        }
 
-        /* --- Grid System --- */
-        #parts-container {
+        .tab-btn.active {
+            color: #000;
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+
+        /* --- GRID LAYOUT --- */
+        .models-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 30px;
-            padding-bottom: 50px;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px 100px 20px;
         }
 
-        .part-card {
-            background: var(--card-bg);
+        .model-card {
+            background: #fff;
             border-radius: 24px;
-            padding: 25px;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(0,0,0,0.02);
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            cursor: default;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: slideUp 0.5s forwards;
-        }
-
-        .part-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 6px 12px;
-            background: #f2f2f7;
-            color: var(--text-sec);
-            font-size: 11px;
-            font-weight: 700;
-            border-radius: 100px;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-        }
-
-        .image-wrapper {
-            width: 100%;
-            height: 180px;
-            background: #fbfbfd;
-            border-radius: 16px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.4s var(--ease-apple);
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            position: relative;
             overflow: hidden;
         }
 
-        .image-wrapper img {
-            max-width: 85%;
-            max-height: 85%;
-            object-fit: contain;
-            transition: transform 0.5s ease;
+        .model-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
         }
 
-        .part-card:hover img { transform: scale(1.1); }
+        .model-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
 
-        .part-info h3 { margin: 0 0 8px 0; font-size: 17px; font-weight: 600; }
-        .part-info p { margin: 0; font-size: 14px; color: var(--text-sec); line-height: 1.5; }
+        .model-tag {
+            color: #86868b;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+        }
 
-        /* --- Animations --- */
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+        .cta-link {
+            color: var(--accent-blue);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-top: 20px;
+            display: inline-block;
+        }
 
-        /* --- Mobile Responsive --- */
-        @media (max-width: 900px) {
-            body { flex-direction: column; height: auto; overflow: auto; }
-            #sidebar { 
-                width: 100%; 
-                height: auto; 
-                padding: 20px; 
-                box-sizing: border-box;
-                position: sticky; top: 0;
-                border-bottom: 1px solid #ddd;
+        .cta-link:hover {
+            text-decoration: underline;
+        }
+
+        /* --- 3D PHONE MODAL OVERLAY --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(25px);
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s var(--ease-apple);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 900px;
+            height: 80vh;
+            background: #fff;
+            border-radius: 30px;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.15);
+            display: flex;
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: transform 0.5s var(--ease-apple);
+            position: relative;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 36px;
+            height: 36px;
+            background: #e8e8ed;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            z-index: 10;
+            font-size: 1.2rem;
+            color: #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- MODAL LAYOUT: 3D STAGE vs DETAILS --- */
+        .modal-stage {
+            flex: 1;
+            background: #f5f5f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            perspective: 1000px; /* Essential for 3D */
+        }
+
+        .modal-details {
+            flex: 1;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                flex-direction: column;
+                height: 90vh;
             }
-            #main-content { padding: 30px 20px; }
-            h1 { font-size: 28px; }
-            .model-btn { padding: 12px; margin-bottom: 5px; }
+            .modal-stage {
+                flex: 1.2;
+            }
+            .modal-details {
+                flex: 1;
+                padding: 30px;
+            }
         }
+
+        /* --- PURE CSS 3D PHONE --- */
+        .phone-3d {
+            width: 180px;
+            height: 360px;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateY(-30deg) rotateX(10deg);
+            animation: rotatePhone 12s infinite linear;
+        }
+
+        @keyframes rotatePhone {
+            0% { transform: rotateY(0deg) rotateX(10deg); }
+            50% { transform: rotateY(180deg) rotateX(10deg); }
+            100% { transform: rotateY(360deg) rotateX(10deg); }
+        }
+
+        /* Phone Sides */
+        .side {
+            position: absolute;
+            background: #333;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .front {
+            width: 180px;
+            height: 360px;
+            background: #000;
+            border-radius: 24px;
+            transform: translateZ(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
+            overflow: hidden;
+        }
+
+        .back {
+            width: 180px;
+            height: 360px;
+            background: #555; /* Default Dynamic */
+            border-radius: 24px;
+            transform: translateZ(-10px) rotateY(180deg);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        /* Camera bump simulation */
+        .camera-bump {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        .left-side {
+            width: 20px;
+            height: 360px;
+            background: #444;
+            transform: rotateY(-90deg) translateZ(10px);
+            border-radius: 4px;
+        }
+
+        .right-side {
+            width: 20px;
+            height: 360px;
+            background: #444;
+            transform: rotateY(90deg) translateZ(170px);
+            border-radius: 4px;
+        }
+
+        .top-side {
+            width: 180px;
+            height: 20px;
+            background: #444;
+            transform: rotateX(90deg) translateZ(10px);
+        }
+
+        .bottom-side {
+            width: 180px;
+            height: 20px;
+            background: #444;
+            transform: rotateX(-90deg) translateZ(350px);
+        }
+
+        /* Screen visual */
+        .screen-content {
+            width: 92%;
+            height: 96%;
+            background: linear-gradient(135deg, #2c3e50, #000);
+            border-radius: 20px;
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .dynamic-island {
+            width: 60px;
+            height: 18px;
+            background: #000;
+            border-radius: 20px;
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5;
+        }
+
+        /* --- HARDWARE DETAILS TYPOGRAPHY --- */
+        .details-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            line-height: 1.1;
+        }
+
+        .details-tag {
+            color: #86868b;
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
+
+        .spec-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #e5e5e5;
+            padding-bottom: 15px;
+        }
+
+        .spec-icon {
+            font-size: 2rem;
+            width: 50px;
+            color: #1d1d1f;
+        }
+
+        .spec-text h4 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .spec-text p {
+            margin: 4px 0 0 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* --- DYNAMIC COLOR CLASSES --- */
+        .titanium-natural .back, .titanium-natural .side { background: #bebdb9; }
+        .titanium-blue .back, .titanium-blue .side { background: #2f3440; }
+        .titanium-black .back, .titanium-black .side { background: #1e1e1e; }
+        
+        .screen-15 { background: url('https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-finish-select-202309-6-1inch-naturaltitanium?wid=5120&hei=2880&fmt=p-jpg') center/cover; }
     </style>
 </head>
 <body>
 
-<nav id="sidebar">
-    <div class="brand"> <span>Anatomy</span></div>
-    
-    <div class="nav-label">Select Model</div>
-    <button class="model-btn active" onclick="loadAnatomy('iphone15')">iPhone 15 Pro Max</button>
-    <button class="model-btn" onclick="loadAnatomy('iphone14')">iPhone 14 Pro</button>
-    <button class="model-btn" onclick="loadAnatomy('iphone13')">iPhone 13</button>
+    <header>
+        <div class="nav-logo"> iPhone</div>
+    </header>
 
-    <div style="margin-top: auto; padding-top: 30px; border-top: 1px solid #eaeaea;">
-        <small style="color: #999; font-size: 11px;">Educational Purpose Only</small>
+    <div class="hero">
+        <h1 id="hero-title">Pro. Beyond.</h1>
+        <div class="subtitle">Titanium. So strong. So light. So Pro.</div>
     </div>
-</nav>
 
-<main id="main-content">
-    <header id="header-area">
-        </header>
-
-    <div id="parts-container">
+    <div class="tabs-container">
+        <div class="segmented-control">
+            <button class="tab-btn active" onclick="filterModels('pro')">iPhone 15 Pro</button>
+            <button class="tab-btn" onclick="filterModels('base')">iPhone 15</button>
+            <button class="tab-btn" onclick="filterModels('se')">iPhone SE</button>
         </div>
-</main>
+    </div>
 
-<script>
-    // Complete Database
-    const db = {
-        'iphone15': {
-            title: "iPhone 15 Pro Max",
-            desc: "Explore the internal engineering of the titanium-built flagship.",
-            parts: [
-                { name: "A17 Pro Chip", cat: "Logic", desc: "Industry's first 3-nanometer chip offering console-level gaming.", img: "https://vkrepair.com/wp-content/uploads/2023/10/A17-Pro-Chip.jpg" },
-                { name: "Tetraprism Lens", cat: "Camera", desc: "Periscope design enabling 5x optical zoom capability.", img: "https://cdn.dxomark.com/wp-content/uploads/medias/post-154941/Apple-iPhone-15-Pro-Max_camera-module.jpg" },
-                { name: "USB-C Controller", cat: "IO", desc: "Supports USB 3 speeds up to 10Gb/s transfer rates.", img: "https://9to5mac.com/wp-content/uploads/sites/6/2023/08/iphone-15-usb-c-port.jpg" },
-                { name: "Titanium Frame", cat: "Body", desc: "Grade 5 titanium alloy bonded to an aluminum substructure.", img: "https://photos5.appleinsider.com/gallery/56230-114441-Titanium-iPhone-15-Pro-xl.jpg" },
-                { name: "Li-Ion Battery", cat: "Power", desc: "4422 mAh stacked battery architecture.", img: "https://guide-images.ifixit.com/igi/O1vGZf4v2L6U3q2J.large" }
-            ]
-        },
-        'iphone14': {
-            title: "iPhone 14 Pro",
-            desc: "The device that introduced the Dynamic Island.",
-            parts: [
-                { name: "A16 Bionic", cat: "Logic", desc: "Powering the Dynamic Island and computational photography.", img: "https://9to5mac.com/wp-content/uploads/sites/6/2022/09/A16-Bionic.jpg" },
-                { name: "48MP Main Sensor", cat: "Camera", desc: "Quad-pixel sensor for 4x more light capture.", img: "https://i.ytimg.com/vi/S8Wv8-X97m4/maxresdefault.jpg" },
-                { name: "Dynamic Island", cat: "Display", desc: "Interactive cutout blending hardware and software.", img: "https://9to5mac.com/wp-content/uploads/sites/6/2022/09/dynamic-island-iphone-14-pro.jpg" },
-                { name: "Satellite Module", cat: "Connectivity", desc: "Enables Emergency SOS via satellite connection.", img: "https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fbucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com%2Fpublic%2Fimages%2F6e96032d-22f3-42e9-913a-6c1704289874_1600x900.jpeg" }
-            ]
-        },
-        'iphone13': {
-            title: "iPhone 13",
-            desc: "A total powerhouse with diagonal dual-camera system.",
-            parts: [
-                { name: "A15 Bionic", cat: "Logic", desc: "6-core CPU with 2 performance and 4 efficiency cores.", img: "https://www.apple.com/newsroom/images/product/iphone/standard/Apple_A15-Bionic-GPU_09142021_big.jpg.large.jpg" },
-                { name: "TrueDepth Camera", cat: "Sensor", desc: "Smaller notch design housing FaceID components.", img: "https://guide-images.ifixit.com/igi/2kY1N6CRAuP1v2W4.large" },
-                { name: "Ceramic Shield", cat: "Body", desc: "Nano-ceramic crystals infused into glass for toughness.", img: "https://9to5mac.com/wp-content/uploads/sites/6/2020/10/ceramic-shield-iphone-12.jpg" }
-            ]
-        }
-    };
-
-    function loadAnatomy(modelKey) {
-        const data = db[modelKey];
-        const container = document.getElementById('parts-container');
-        const header = document.getElementById('header-area');
-        
-        // 1. Update Buttons
-        document.querySelectorAll('.model-btn').forEach(b => b.classList.remove('active'));
-        event.currentTarget.classList.add('active');
-
-        // 2. Clear content
-        container.innerHTML = '';
-        
-        // 3. Update Header
-        header.innerHTML = `<h1>${data.title}</h1><p class="desc">${data.desc}</p>`;
-
-        // 4. Inject Cards with Animation Delay
-        data.parts.forEach((part, index) => {
-            const card = document.createElement('div');
-            card.className = 'part-card';
-            card.style.animationDelay = `${index * 0.1}s`; // Stagger effect
-            
-            card.innerHTML = `
-                <span class="badge">${part.cat}</span>
-                <div class="image-wrapper">
-                    <img src="${part.img}" alt="${part.name}" 
-                         onerror="this.src='https://via.placeholder.com/300x200?text=Part+Image'">
-                </div>
-                <div class="part-info">
-                    <h3>${part.name}</h3>
-                    <p>${part.desc}</p>
-                </div>
-            `;
-            container.appendChild(card);
-        });
-    }
-
-    // Initialize with iPhone 15 on load
-    window.onload = () => {
-        // Mock click on first button
-        document.querySelector('.model-btn').click();
-    };
-</script>
-
-</body>
-</html>
+    <div class="models-grid" id="grid-container">
