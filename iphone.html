@@ -3,205 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iPhone Anatomy | Light Mode</title>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"></script>
-
+    <title>iPhone Parts Visualizer</title>
     <style>
-        :root { 
-            --accent: #007aff; 
-            --bg-sidebar: #f5f5f7; 
-            --bg-canvas: #ffffff; 
-            --text-main: #1d1d1f;
+        :root {
+            --apple-grey: #f5f5f7;
+            --apple-blue: #007aff;
+            --text-dark: #1d1d1f;
         }
 
-        body, html { margin: 0; padding: 0; height: 100%; background: var(--bg-canvas); color: var(--text-main); font-family: -apple-system, sans-serif; overflow: hidden; }
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #ffffff;
+            color: var(--text-dark);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-        #layout { display: flex; height: 100vh; }
-        
-        /* Sidebar Light Style */
+        /* Sidebar Style */
         #sidebar {
-            width: 300px; background: var(--bg-sidebar); border-right: 1px solid #d2d2d7;
-            padding: 40px 25px; z-index: 10; display: flex; flex-direction: column;
+            width: 280px;
+            background-color: var(--apple-grey);
+            border-right: 1px solid #d2d2d7;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
         }
 
-        h1 { font-size: 24px; margin: 0; font-weight: 600; color: #1d1d1f; }
-        .tagline { color: #86868b; font-size: 13px; margin-bottom: 30px; }
+        h1 { font-size: 22px; margin-bottom: 20px; font-weight: 600; }
 
-        .part-list-item {
-            background: #fff; border: 1px solid #d2d2d7; padding: 12px 15px;
-            border-radius: 10px; margin-bottom: 8px; font-size: 14px; color: #424245;
+        .model-btn {
+            background: white;
+            border: 1px solid #d2d2d7;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 500;
+            text-align: left;
         }
 
-        /* Info Panel Light Mode */
-        #info-card {
-            position: absolute; top: 30px; right: 30px; width: 300px;
-            background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px);
-            padding: 25px; border-radius: 20px; border: 1px solid #d2d2d7;
-            display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            animation: fadeIn 0.4s ease;
+        .model-btn:hover { border-color: var(--apple-blue); background: #fafafa; }
+        .model-btn.active { background: var(--apple-blue); color: white; border-color: var(--apple-blue); }
+
+        /* Main Content Area */
+        #content-area {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
-        #info-card h2 { margin: 0 0 10px 0; color: var(--accent); font-size: 20px; }
-        #info-card p { font-size: 14px; line-height: 1.5; color: #424245; }
+        #model-title { font-size: 32px; margin-bottom: 30px; }
 
-        #canvas-area { flex-grow: 1; position: relative; }
-        .tip { position: absolute; bottom: 20px; width: 100%; text-align: center; color: #86868b; font-size: 12px; pointer-events: none; }
+        /* Parts Grid */
+        #parts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .part-card {
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            border-radius: 20px;
+            padding: 15px;
+            text-align: center;
+            transition: 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .part-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+
+        .part-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: contain;
+            border-radius: 10px;
+            background: #f9f9f9;
+            margin-bottom: 15px;
+        }
+
+        .part-card h3 { font-size: 18px; margin: 10px 0 5px 0; color: var(--apple-blue); }
+        .part-card p { font-size: 13px; color: #666; line-height: 1.4; }
+
+        .empty-state { color: #888; margin-top: 100px; font-size: 18px; }
     </style>
 </head>
 <body>
 
-<div id="layout">
-    <div id="sidebar">
-        <h1>iPhone Anatomy</h1>
-        <p class="tagline">Interactive Educational Tool</p>
-        
-        <div class="part-list-item">📱 Display Panel</div>
-        <div class="part-list-item">🔋 Battery Module</div>
-        <div class="part-list-item">🧠 A17 Bionic Chip</div>
-        <div class="part-list-item">📸 Camera System</div>
-        
-        <div style="margin-top: auto; font-size: 11px; color: #86868b;">
-            Click the phone to expand parts. <br> Use mouse to rotate & zoom.
-        </div>
-    </div>
+<div id="sidebar">
+    <h1>iPhone Models</h1>
+    <div class="model-btn" onclick="showParts('iphone15')">iPhone 15 Pro Max</div>
+    <div class="model-btn" onclick="showParts('iphone14')">iPhone 14 Pro</div>
+    <div class="model-btn" onclick="showParts('iphone13')">iPhone 13</div>
+</div>
 
-    <div id="canvas-area">
-        <div id="info-card">
-            <h2 id="part-title">Part Name</h2>
-            <p id="part-desc">Description...</p>
-        </div>
-        <div class="tip">CLICK TO EXPLODE • DRAG TO ROTATE</div>
-    </div>
+<div id="content-area">
+    <div id="initial-msg" class="empty-state">Select a model to see its internal parts</div>
+    <h1 id="model-title"></h1>
+    <div id="parts-grid"></div>
 </div>
 
 <script>
-    let scene, camera, renderer, controls, group;
-    let isExploded = false;
-
-    const partDetails = {
-        "OLED Display": "Super Retina XDR display with ceramic shield. High contrast and vibrant colors.",
-        "A17 Chip": "The heart of the device. 3nm process for industry-leading performance.",
-        "Battery": "High-density Lithium-ion pack designed for maximum battery life.",
-        "Main Camera": "Triple-lens system with LiDAR for professional-grade photography.",
-        "Motherboard": "Precision engineered PCB that connects all vital electronic components."
+    // Data Structure for iPhone Parts
+    const iphoneData = {
+        'iphone15': {
+            name: "iPhone 15 Pro Max",
+            parts: [
+                { title: "A17 Bionic Chip", desc: "First 3nm chip with 6-core GPU.", img: "https://vkrepair.com/wp-content/uploads/2023/10/A17-Pro-Chip.jpg" },
+                { title: "Titanium Chassis", desc: "Space-grade titanium for light weight.", img: "https://www.apple.com/newsroom/images/2023/09/apple-unveils-iphone-15-pro-and-iphone-15-pro-max/article/Apple-iPhone-15-Pro-lineup-titanium-design-230912_inline.jpg.large.jpg" },
+                { title: "USB-C Module", desc: "High-speed 10Gbps data transfer port.", img: "https://9to5mac.com/wp-content/uploads/sites/6/2023/08/iphone-15-usb-c-port.jpg" },
+                { title: "Tetraprism Lens", desc: "5x Optical zoom periscope camera system.", img: "https://cdn.dxomark.com/wp-content/uploads/medias/post-154941/Apple-iPhone-15-Pro-Max_camera-module.jpg" }
+            ]
+        },
+        'iphone14': {
+            name: "iPhone 14 Pro",
+            parts: [
+                { title: "A16 Bionic", desc: "The brain behind Dynamic Island.", img: "https://9to5mac.com/wp-content/uploads/sites/6/2022/09/A16-Bionic.jpg" },
+                { title: "48MP Sensor", desc: "High-resolution main camera sensor.", img: "https://i.ytimg.com/vi/S8Wv8-X97m4/maxresdefault.jpg" },
+                { title: "Battery Pack", desc: "Optimized Li-ion battery for 14 Pro.", img: "https://guide-images.ifixit.com/igi/O1vGZf4v2L6U3q2J.large" }
+            ]
+        },
+        'iphone13': {
+            name: "iPhone 13",
+            parts: [
+                { title: "A15 Bionic", desc: "Efficient and powerful 5nm chip.", img: "https://www.apple.com/newsroom/images/product/iphone/standard/Apple_A15-Bionic-GPU_09142021_big.jpg.large.jpg" },
+                { title: "Dual Camera", desc: "Diagonal camera layout system.", img: "https://guide-images.ifixit.com/igi/2kY1N6CRAuP1v2W4.large" }
+            ]
+        }
     };
 
-    function init() {
-        scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xffffff); // Clean White Background
+    function showParts(modelId) {
+        // Remove empty state message
+        document.getElementById('initial-msg').style.display = 'none';
+        
+        const data = iphoneData[modelId];
+        const grid = document.getElementById('parts-grid');
+        const title = document.getElementById('model-title');
+        
+        // Update Title
+        title.innerText = data.name;
+        
+        // Highlight active button
+        const buttons = document.querySelectorAll('.model-btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        event.currentTarget.classList.add('active');
 
-        camera = new THREE.PerspectiveCamera(45, (window.innerWidth - 300) / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 2, 10);
-
-        renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth - 300, window.innerHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
-        document.getElementById('canvas-area').appendChild(renderer.domElement);
-
-        // Bright Lighting for Light Mode
-        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.2);
-        scene.add(hemiLight);
-
-        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        dirLight.position.set(5, 10, 5);
-        scene.add(dirLight);
-
-        controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-
-        group = new THREE.Group();
-        scene.add(group);
-
-        createParts();
-        animate();
-    }
-
-    function createParts() {
-        // Clear old
-        while(group.children.length > 0) group.remove(group.children[0]);
-
-        const components = [
-            { name: "OLED Display", color: 0x111111, size: [2.5, 5, 0.08], z: 0.4 },
-            { name: "A17 Chip", color: 0x555555, size: [0.8, 0.8, 0.15], z: 0.1, y: 1 },
-            { name: "Motherboard", color: 0x2d5a27, size: [1.2, 3, 0.1], z: 0 },
-            { name: "Battery", color: 0x333333, size: [1.5, 3.5, 0.2], z: -0.2, x: -0.4 },
-            { name: "Main Camera", color: 0x007aff, size: [1, 1, 0.3], z: -0.5, x: 0.6, y: 1.8 }
-        ];
-
-        components.forEach(c => {
-            const geo = new THREE.BoxGeometry(...c.size);
-            const mat = new THREE.MeshStandardMaterial({ 
-                color: c.color, 
-                metalness: 0.6, 
-                roughness: 0.2,
-                emissive: 0x000000 
-            });
-            const mesh = new THREE.Mesh(geo, mat);
-            mesh.name = c.name;
-            mesh.position.set(c.x || 0, c.y || 0, 0);
-            group.add(mesh);
+        // Clear and Add New Parts
+        grid.innerHTML = '';
+        data.parts.forEach(part => {
+            const card = document.createElement('div');
+            card.className = 'part-card';
+            card.innerHTML = `
+                <img src="${part.img}" alt="${part.title}" onerror="this.src='https://via.placeholder.com/250x180?text=Part+Image'">
+                <h3>${part.title}</h3>
+                <p>${part.desc}</p>
+            `;
+            grid.appendChild(card);
         });
     }
-
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-
-    window.addEventListener('click', (e) => {
-        if(e.clientX < 300) return;
-
-        mouse.x = ((e.clientX - 300) / (window.innerWidth - 300)) * 2 - 1;
-        mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-
-        raycaster.setFromCamera(mouse, camera);
-        const hits = raycaster.intersectObjects(group.children);
-
-        if (hits.length > 0) {
-            const selected = hits[0].object;
-            
-            if (!isExploded) {
-                // Explode Animation
-                group.children.forEach((child, i) => {
-                    gsap.to(child.position, { z: i * 1.5 - 3, duration: 1.2, ease: "back.out(1.2)" });
-                });
-                isExploded = true;
-            } else {
-                // Info
-                const card = document.getElementById('info-card');
-                card.style.display = 'block';
-                document.getElementById('part-title').innerText = selected.name;
-                document.getElementById('part-desc').innerText = partDetails[selected.name] || "Internal component detail.";
-                
-                // Highlight
-                group.children.forEach(c => c.material.emissive.setHex(0x000000));
-                selected.material.emissive.setHex(0x111111);
-            }
-        } else {
-            // Collapse
-            if(isExploded) {
-                group.children.forEach(c => gsap.to(c.position, { z: 0, duration: 1, ease: "power2.inOut" }));
-                isExploded = false;
-                document.getElementById('info-card').style.display = 'none';
-            }
-        }
-    });
-
-    function animate() {
-        requestAnimationFrame(animate);
-        controls.update();
-        renderer.render(scene, camera);
-    }
-
-    window.addEventListener('resize', () => {
-        camera.aspect = (window.innerWidth - 300) / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth - 300, window.innerHeight);
-    });
-
-    init();
 </script>
+
 </body>
 </html>
