@@ -3,420 +3,323 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iPhone 17 Pro Showcase</title>
+    <title>iPhone Evolution - Apple Style Showcase</title>
     <style>
-        /* --- CORE STYLES --- */
+        /* --- Apple Style Base Settings --- */
         :root {
-            --bg: #f5f5f7;
-            --text: #1d1d1f;
-            --card-bg: #ffffff;
-            --blue: #0071e3;
-            --ease: cubic-bezier(0.4, 0, 0.2, 1);
+            --bg-color: #fbfbfd;
+            --sidebar-bg: #ffffff;
+            --text-main: #1d1d1f;
+            --text-light: #86868b;
+            --accent: #0071e3;
+            --border: #d2d2d7;
+            --hover-bg: #f5f5f7;
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            overflow-x: hidden;
-        }
-
-        /* --- NAVIGATION --- */
-        nav {
-            background: rgba(251, 251, 253, 0.8);
-            backdrop-filter: blur(20px);
-            position: sticky;
-            top: 0;
-            z-index: 99;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
-            padding: 15px 0;
-            text-align: center;
-        }
-
-        .nav-logo { font-weight: 600; font-size: 1.3rem; }
-
-        /* --- HERO --- */
-        .hero {
-            text-align: center;
-            padding: 80px 20px 40px;
-        }
-
-        h1 { font-size: 3.5rem; margin: 0 0 10px; letter-spacing: -1.5px; }
-        .subtitle { color: #86868b; font-size: 1.5rem; margin-bottom: 40px; }
-
-        /* --- TABS --- */
-        .tabs-wrapper {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
             display: flex;
-            justify-content: center;
-            margin-bottom: 50px;
+            overflow: hidden; /* Scroll handle inside containers */
         }
 
-        .segmented-control {
-            background: #e1e1e6;
-            padding: 4px;
-            border-radius: 99px;
-            display: inline-flex;
+        /* --- Left Sidebar (Navigation) --- */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            height: 100%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
         }
 
-        .tab-btn {
-            background: transparent;
-            border: none;
-            padding: 10px 28px;
-            font-size: 1rem;
-            border-radius: 99px;
+        .sidebar-title {
+            padding: 0 20px 15px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            padding: 12px 24px;
             cursor: pointer;
+            font-size: 15px;
             font-weight: 500;
-            transition: all 0.3s var(--ease);
-            color: #666;
+            color: var(--text-main);
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
         }
 
-        .tab-btn.active {
-            background: #fff;
-            color: #000;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        .nav-item:hover {
+            background-color: var(--hover-bg);
+            color: var(--accent);
         }
 
-        /* --- GRID --- */
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 0 20px 100px;
+        .nav-item.active {
+            background-color: var(--hover-bg);
+            color: var(--accent);
+            border-left: 3px solid var(--accent);
+            font-weight: 600;
         }
 
-        .card {
-            background: var(--card-bg);
-            border-radius: 24px;
+        /* --- Right Content Area --- */
+        .main-content {
+            flex: 1;
             padding: 40px;
-            text-align: center;
-            transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
-            cursor: pointer;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .phone-container {
+            max-width: 900px;
+            margin: 0 auto;
             opacity: 0;
-            animation: fadeUp 0.6s forwards;
-            position: relative;
-            overflow: hidden;
+            transform: translateY(10px);
+            animation: fadeIn 0.5s forwards;
         }
 
-        .card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
-        }
-
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
+        @keyframes fadeIn {
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .card-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 5px; }
-        .card-desc { color: #86868b; margin-bottom: 30px; }
-        .card-emoji { font-size: 5rem; margin: 20px 0; display: block; }
-        .link { color: var(--blue); font-size: 0.9rem; text-decoration: none; }
-
-        /* --- MODAL --- */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(20px);
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.4s var(--ease);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        /* Phone Header */
+        .header-section {
+            text-align: center;
+            margin-bottom: 50px;
         }
 
-        .modal-overlay.open { opacity: 1; pointer-events: auto; }
+        .phone-img {
+            height: 300px;
+            width: auto;
+            object-fit: contain;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));
+        }
 
-        .modal-content {
+        .phone-title {
+            font-size: 40px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 10px;
+        }
+
+        .phone-tagline {
+            font-size: 24px;
+            color: var(--text-light);
+            font-weight: 400;
+        }
+
+        /* Hardware Details Grid */
+        .specs-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .spec-card {
             background: #fff;
-            width: 90%;
-            max-width: 1000px;
-            height: 80vh;
-            border-radius: 24px;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.2);
-            display: flex;
-            overflow: hidden;
-            transform: scale(0.95);
-            transition: transform 0.4s var(--ease);
-            position: relative;
+            padding: 25px;
+            border-radius: 18px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            transition: transform 0.2s;
         }
 
-        .modal-overlay.open .modal-content { transform: scale(1); }
-
-        .close-btn {
-            position: absolute;
-            top: 20px; right: 20px;
-            background: #f0f0f0;
-            border: none;
-            width: 36px; height: 36px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.2rem;
-            z-index: 20;
-            color: #555;
+        .spec-card:hover {
+            transform: scale(1.02);
         }
 
-        /* Modal Structure */
-        .modal-left {
-            flex: 1.5;
-            background: #f5f5f7;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            perspective: 1000px;
+        .spec-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
         }
 
-        .modal-right {
-            flex: 1;
-            padding: 60px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            border-left: 1px solid #f0f0f0;
+        .spec-value {
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 1.4;
         }
 
-        /* --- SKETCHFAB IFRAME --- */
-        .sketchfab-embed-wrapper {
+        /* A to Z Table Style for extra details */
+        .full-details {
+            margin-top: 50px;
             width: 100%;
-            height: 100%;
-            display: none; /* Hidden by default */
-        }
-        
-        .sketchfab-embed-wrapper iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        /* --- CSS FALLBACK PHONE (For other models) --- */
-        .phone-3d {
-            width: 170px;
-            height: 340px;
-            position: relative;
-            transform-style: preserve-3d;
-            animation: spin 10s infinite linear;
-            display: block;
-            --phone-color: #333;
-        }
-
-        @keyframes spin {
-            0% { transform: rotateX(10deg) rotateY(0deg); }
-            100% { transform: rotateX(10deg) rotateY(360deg); }
-        }
-
-        .side { position: absolute; border: 1px solid rgba(0,0,0,0.05); }
-        .front {
-            width: 170px; height: 340px; background: #000;
-            transform: translateZ(10px); border-radius: 24px;
-            box-shadow: inset 0 0 15px rgba(255,255,255,0.1);
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 18px;
             overflow: hidden;
-            display: flex; justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
         }
-        .notch { width: 35%; height: 20px; background: #111; border-radius: 0 0 12px 12px; }
-        .back {
-            width: 170px; height: 340px; background: var(--phone-color);
-            transform: translateZ(-10px) rotateY(180deg); border-radius: 24px;
-        }
-        .left { width: 20px; height: 340px; background: #555; transform: rotateY(-90deg) translateZ(10px); }
-        .right { width: 20px; height: 340px; background: #555; transform: rotateY(90deg) translateZ(160px); }
-        .top { width: 170px; height: 20px; background: #555; transform: rotateX(90deg) translateZ(10px); }
-        .bottom { width: 170px; height: 20px; background: #555; transform: rotateX(-90deg) translateZ(330px); }
 
-        /* Hardware Spec Styling */
-        .spec-row {
-            display: flex; align-items: center; margin-bottom: 30px;
-            border-bottom: 1px solid #eee; padding-bottom: 15px;
+        .full-details th, .full-details td {
+            text-align: left;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
         }
-        .spec-icon { font-size: 2rem; margin-right: 20px; width: 40px; text-align: center; }
-        .spec-detail h4 { margin: 0; font-size: 1.1rem; }
-        .spec-detail p { margin: 5px 0 0; color: #666; font-size: 0.9rem; }
 
-        @media(max-width: 800px) {
-            .modal-content { flex-direction: column; height: 100%; width: 100%; border-radius: 0; }
-            .modal-left { height: 45%; }
-            .modal-right { padding: 30px; height: 55%; overflow-y: auto; }
+        .full-details th {
+            background-color: #f5f5f7;
+            width: 30%;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .full-details tr:last-child td, .full-details tr:last-child th {
+            border-bottom: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: 150px; flex-direction: row; overflow-x: auto; border-right: none; border-bottom: 1px solid var(--border); }
+            .nav-item { white-space: nowrap; border-left: none; border-bottom: 3px solid transparent; }
+            .nav-item.active { border-left: none; border-bottom: 3px solid var(--accent); }
         }
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="nav-logo"> Apple Event</div>
-    </nav>
-
-    <div class="hero">
-        <h1 id="hero-title">Hello, Future.</h1>
-        <div class="subtitle">Designed to be loved.</div>
-
-        <div class="tabs-wrapper">
-            <div class="segmented-control">
-                <button class="tab-btn active" onclick="switchTab('pro')">iPhone 17 Pro</button>
-                <button class="tab-btn" onclick="switchTab('base')">iPhone 17</button>
-                <button class="tab-btn" onclick="switchTab('se')">iPhone SE</button>
-            </div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-title">Select Model</div>
         </div>
-    </div>
 
-    <div class="grid-container" id="grid"></div>
-
-    <div class="modal-overlay" id="modal">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeModal()">×</button>
-            
-            <div class="modal-left">
-                <div class="sketchfab-embed-wrapper" id="real-3d-wrapper">
-                    <iframe id="sketchfab-iframe" title="iPhone 17 Pro Max" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src=""> </iframe>
-                </div>
-
-                <div class="phone-3d" id="css-phone">
-                    <div class="side front"><div class="notch"></div></div>
-                    <div class="side back"></div>
-                    <div class="side left"></div>
-                    <div class="side right"></div>
-                    <div class="side top"></div>
-                    <div class="side bottom"></div>
-                </div>
+    <div class="main-content">
+        <div class="phone-container" id="display-area">
             </div>
-
-            <div class="modal-right">
-                <h2 id="m-title" style="font-size: 2.5rem; margin-top: 0; margin-bottom: 5px;">Model Name</h2>
-                <p id="m-desc" style="color: #888; margin-bottom: 40px; font-size: 1.2rem;">Tagline goes here.</p>
-                
-                <div class="spec-row">
-                    <div class="spec-icon">⚡️</div>
-                    <div class="spec-detail">
-                        <h4 id="m-chip">Processor</h4>
-                        <p>Industry leading speed.</p>
-                    </div>
-                </div>
-                <div class="spec-row">
-                    <div class="spec-icon">📷</div>
-                    <div class="spec-detail">
-                        <h4 id="m-cam">Camera</h4>
-                        <p>Capture the moment.</p>
-                    </div>
-                </div>
-                <div class="spec-row">
-                    <div class="spec-icon">🔋</div>
-                    <div class="spec-detail">
-                        <h4 id="m-batt">Battery</h4>
-                        <p>All-day battery life.</p>
-                    </div>
-                </div>
-                
-                <a href="#" class="link" style="font-size: 1.1rem; margin-top: 20px;">Buy Now ></a>
-            </div>
-        </div>
     </div>
 
     <script>
-        // --- DATA ---
-        // Added 'embedUrl' specifically for 17 Pro Max
-        const phones = {
-            pro: [
-                { 
-                    id: '17promax', 
-                    name: "iPhone 17 Pro Max", 
-                    tag: "The ultimate iPhone.", 
-                    chip: "A19 Pro Chip", 
-                    cam: "Triple 48MP Fusion", 
-                    batt: "33h Playback",
-                    // The Sketchfab Embed URL provided
-                    embedUrl: "https://sketchfab.com/models/87fc1df741384124a8ce0226d2b2058d/embed?autostart=1&ui_controls=1&ui_infos=0&ui_inspector=0&ui_stop=0&ui_watermark=0&ui_watermark_link=0" 
-                },
-                { 
-                    id: '17pro', 
-                    name: "iPhone 17 Pro", 
-                    tag: "So strong. So light.", 
-                    chip: "A19 Pro Chip", 
-                    cam: "Triple 48MP System", 
-                    batt: "29h Playback",
-                    color: "#4e5363" // Titanium Blue CSS color
+        // --- DATA OBJECT (Yahan aap aur phones add kar saktay hain) ---
+        const phonesData = [
+            {
+                id: "iphone1",
+                name: "iPhone (Original)",
+                tagline: "This is only the beginning.",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/IPhone_2G_PSD_Mock.png/430px-IPhone_2G_PSD_Mock.png", // Sample image
+                specs: {
+                    "Processor": "Samsung RISC ARM (412 MHz)",
+                    "RAM": "128 MB eDRAM",
+                    "Display": "3.5-inch LCD (320x480)",
+                    "Camera": "2.0 MP (No Video)",
+                    "Battery": "1400 mAh",
+                    "Storage": "4GB / 8GB / 16GB",
+                    "OS": "iPhone OS 1.0",
+                    "Material": "Aluminum & Plastic"
                 }
-            ],
-            base: [
-                { id: '17plus', name: "iPhone 17 Plus", tag: "Huge impact.", chip: "A18 Chip", cam: "Advanced Dual Camera", batt: "26h Playback", color: "#f2f2f2" },
-                { id: '17base', name: "iPhone 17", tag: "New camera. New design.", chip: "A18 Chip", cam: "Advanced Dual Camera", batt: "20h Playback", color: "#ff9f9f" }
-            ],
-            se: [
-                { id: 'se', name: "iPhone SE", tag: "Love the power. Love the price.", chip: "A16 Bionic", cam: "Single Wide Camera", batt: "15h Playback", color: "#333" }
-            ]
-        };
-
-        const grid = document.getElementById('grid');
-        const modal = document.getElementById('modal');
-        const iframeWrapper = document.getElementById('real-3d-wrapper');
-        const iframe = document.getElementById('sketchfab-iframe');
-        const cssPhone = document.getElementById('css-phone');
-
-        // --- RENDER GRID ---
-        function switchTab(cat) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
-
-            grid.innerHTML = '';
-            phones[cat].forEach(p => {
-                const el = document.createElement('div');
-                el.className = 'card';
-                el.onclick = () => openModal(p);
-                el.innerHTML = `
-                    <div class="card-title">${p.name}</div>
-                    <div class="card-desc">${p.tag}</div>
-                    <div class="card-emoji">📱</div>
-                    <div class="link">View Details ></div>
-                `;
-                grid.appendChild(el);
-            });
-        }
-
-        // --- OPEN MODAL ---
-        function openModal(data) {
-            // Fill Text Data
-            document.getElementById('m-title').innerText = data.name;
-            document.getElementById('m-desc').innerText = data.tag;
-            document.getElementById('m-chip').innerText = data.chip;
-            document.getElementById('m-cam').innerText = data.cam;
-            document.getElementById('m-batt').innerText = data.batt;
-
-            // TOGGLE BETWEEN SKETCHFAB AND CSS PHONE
-            if (data.embedUrl) {
-                // Show Real 3D
-                cssPhone.style.display = 'none';
-                iframeWrapper.style.display = 'block';
-                iframe.src = data.embedUrl; // Load URL only when needed
-            } else {
-                // Show CSS Fallback
-                iframeWrapper.style.display = 'none';
-                iframe.src = ""; // Unload iframe to save memory
-                cssPhone.style.display = 'block';
-                
-                // Update CSS Phone Color
-                cssPhone.style.setProperty('--phone-color', data.color || '#333');
+            },
+            {
+                id: "iphone15pro",
+                name: "iPhone 15 Pro",
+                tagline: "Titanium. So strong. So light. So Pro.",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/IPhone_15_Pro_Blue_Titanium_mock.png/440px-IPhone_15_Pro_Blue_Titanium_mock.png", // Sample placeholder
+                specs: {
+                    "Processor": "A17 Pro Chip (3nm)",
+                    "RAM": "8 GB LPDDR5",
+                    "Display": "6.1-inch Super Retina XDR OLED (120Hz)",
+                    "Camera": "48MP Main + 12MP Ultra + 12MP Telephoto",
+                    "Battery": "3274 mAh",
+                    "Storage": "128GB to 1TB",
+                    "OS": "iOS 17",
+                    "Material": "Grade 5 Titanium"
+                }
+            },
+            {
+                id: "iphone17promax",
+                name: "iPhone 17 Pro Max",
+                tagline: "The Future is Here.",
+                image: "https://via.placeholder.com/300x500/000000/FFFFFF?text=iPhone+17+Pro+Max", // Placeholder
+                specs: {
+                    "Processor": "A19 Bionic (2nm Expected)",
+                    "RAM": "12 GB LPDDR6X",
+                    "Display": "6.9-inch Micro-LED ProMotion",
+                    "Camera": "48MP Quad-Pixel System (All lenses)",
+                    "Battery": "5000 mAh (Graphene tech)",
+                    "Storage": "256GB to 2TB",
+                    "OS": "iOS 19",
+                    "Material": "Titanium Alloy & Ceramic Shield 3"
+                }
             }
+        ];
 
-            modal.classList.add('open');
-        }
+        // --- RENDER FUNCTIONS ---
+        
+        const sidebar = document.getElementById('sidebar');
+        const displayArea = document.getElementById('display-area');
 
-        function closeModal() {
-            modal.classList.remove('open');
-            // Clear iframe src to stop audio/video when closed
-            setTimeout(() => {
-                iframe.src = "";
-            }, 500);
-        }
-
-        modal.addEventListener('click', (e) => {
-            if(e.target === modal) closeModal();
+        // 1. Sidebar Buttons Create Karna
+        phonesData.forEach((phone, index) => {
+            const btn = document.createElement('div');
+            btn.className = index === 0 ? 'nav-item active' : 'nav-item';
+            btn.innerText = phone.name;
+            btn.onclick = () => loadPhone(index, btn);
+            sidebar.appendChild(btn);
         });
 
-        // Initialize
-        document.querySelector('.tab-btn').click();
+        // 2. Main Content Update Karna
+        function loadPhone(index, clickedBtn) {
+            // Update Active State
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            clickedBtn.classList.add('active');
+
+            const phone = phonesData[index];
+
+            // Specs Card HTML Generate Karna
+            let specsCards = '';
+            let fullTable = '';
+            
+            for (const [key, value] of Object.entries(phone.specs)) {
+                // Top highlighted cards (Display, Chip, Camera)
+                if (['Display', 'Processor', 'Camera', 'Material'].includes(key)) {
+                    specsCards += `
+                        <div class="spec-card">
+                            <div class="spec-label">${key}</div>
+                            <div class="spec-value">${value}</div>
+                        </div>
+                    `;
+                }
+                // Full Table Rows
+                fullTable += `<tr><th>${key}</th><td>${value}</td></tr>`;
+            }
+
+            // Full HTML Injection
+            displayArea.innerHTML = `
+                <div class="header-section">
+                    <img src="${phone.image}" alt="${phone.name}" class="phone-img">
+                    <h1 class="phone-title">${phone.name}</h1>
+                    <p class="phone-tagline">${phone.tagline}</p>
+                </div>
+
+                <div class="specs-section">
+                    ${specsCards}
+                </div>
+
+                <h3 style="margin-top:50px; font-weight:600;">Full Specifications</h3>
+                <table class="full-details">
+                    ${fullTable}
+                </table>
+            `;
+            
+            // Re-trigger Animation
+            displayArea.classList.remove('phone-container');
+            void displayArea.offsetWidth; // Trigger reflow
+            displayArea.classList.add('phone-container');
+        }
+
+        // Initial Load (First Phone)
+        loadPhone(0, sidebar.children[1]); // children[0] is title
+
     </script>
 </body>
 </html>
