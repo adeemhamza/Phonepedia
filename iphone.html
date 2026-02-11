@@ -3,154 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional iPhone Anatomy | 3D Interactive</title>
+    <title>iPhone 15 Pro | Professional 3D Anatomy</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"></script>
 
     <style>
-        :root {
-            --accent: #007aff;
-            --bg: #050505;
-            --glass: rgba(255, 255, 255, 0.1);
-        }
+        :root { --accent: #007aff; --bg: #000; --panel: rgba(15, 15, 15, 0.9); }
+        body, html { margin: 0; padding: 0; height: 100%; background: var(--bg); color: white; font-family: 'SF Pro Display', -apple-system, sans-serif; overflow: hidden; }
 
-        body, html { margin: 0; padding: 0; height: 100%; background: var(--bg); color: white; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; overflow: hidden; }
-
-        /* Sidebar UI */
-        #ui-container { display: flex; height: 100vh; }
+        #main-layout { display: flex; height: 100vh; }
         
+        /* Sidebar Design */
         #sidebar {
-            width: 300px; background: #000; border-right: 1px solid #333;
-            padding: 40px 20px; z-index: 10; display: flex; flex-direction: column;
+            width: 320px; background: #050505; border-right: 1px solid #222;
+            padding: 40px 25px; z-index: 10; display: flex; flex-direction: column;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.8);
         }
 
-        h1 { font-size: 24px; font-weight: 600; margin-bottom: 30px; background: linear-gradient(to right, #fff, #888); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h1 { font-size: 26px; margin: 0 0 10px 0; font-weight: 700; color: #fff; }
+        .subtitle { color: #666; font-size: 14px; margin-bottom: 40px; }
 
-        .model-btn {
-            background: #1c1c1e; border: 1px solid #333; padding: 15px;
-            border-radius: 12px; cursor: pointer; color: #fff; margin-bottom: 15px;
-            transition: 0.3s; text-align: left; font-size: 15px;
+        .model-card {
+            background: #111; border: 1px solid #222; padding: 20px;
+            border-radius: 15px; cursor: pointer; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 15px;
         }
+        .model-card:hover { border-color: var(--accent); background: #161618; transform: scale(1.02); }
+        .model-card.active { border-color: var(--accent); background: rgba(0, 122, 255, 0.1); }
 
-        .model-btn:hover { background: #2c2c2e; border-color: var(--accent); }
-        .model-btn.active { border-color: var(--accent); background: rgba(0, 122, 255, 0.1); }
-
-        /* Information Panel */
-        #detail-panel {
-            position: absolute; right: 30px; top: 30px; width: 320px;
-            background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(20px);
-            padding: 25px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1);
-            display: none; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        /* Floating Info Panel */
+        #info-box {
+            position: absolute; bottom: 40px; right: 40px; width: 350px;
+            background: var(--panel); backdrop-filter: blur(25px);
+            padding: 30px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1);
+            display: none; box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            animation: popUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        @keyframes popUp { from { opacity: 0; transform: translateY(30px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-        #detail-panel h2 { margin-top: 0; color: var(--accent); font-size: 20px; }
-        #detail-panel p { font-size: 14px; line-height: 1.6; color: #aaa; }
+        #info-box h2 { margin: 0 0 15px 0; color: var(--accent); font-size: 22px; }
+        #info-box p { font-size: 15px; line-height: 1.7; color: #bbb; margin: 0; }
 
-        /* Canvas Container */
-        #canvas-wrapper { flex-grow: 1; position: relative; }
-        .controls-hint { position: absolute; bottom: 20px; left: 20px; color: #555; font-size: 12px; pointer-events: none; }
+        #canvas-box { flex-grow: 1; position: relative; outline: none; }
+        .guide { position: absolute; top: 20px; left: 20px; color: #444; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; }
     </style>
 </head>
 <body>
 
-<div id="ui-container">
+<div id="main-layout">
     <div id="sidebar">
-        <h1>iPhone Anatomy</h1>
-        <button class="model-btn active" onclick="changeModel('iPhone 15 Pro')">iPhone 15 Pro</button>
-        <button class="model-btn" onclick="changeModel('iPhone 14 Pro')">iPhone 14 Pro</button>
-        <button class="model-btn" onclick="changeModel('iPhone 13')">iPhone 13</button>
+        <h1>iPhone Lab</h1>
+        <p class="subtitle">Interactive Anatomy Explorer</p>
         
-        <div style="margin-top: auto; color: #444; font-size: 12px;">
-            Educational Purpose Tool <br> Powered by Three.js & GSAP
+        <div class="model-card active">
+            <strong>iPhone 15 Pro Max</strong>
+            <div style="font-size: 12px; color: #555; margin-top: 5px;">A17 Bionic • Titanium Build</div>
+        </div>
+        
+        <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid #222;">
+            <p style="font-size: 12px; color: #444;">Click a part to explode & inspect. <br> Rotate with mouse.</p>
         </div>
     </div>
 
-    <div id="canvas-wrapper">
-        <div id="detail-panel">
-            <h2 id="part-title">Part Name</h2>
-            <p id="part-desc">Details will appear here...</p>
+    <div id="canvas-box">
+        <div class="guide">Real-time 3D Engine Active</div>
+        <div id="info-box">
+            <h2 id="title">Part</h2>
+            <p id="desc">Description goes here.</p>
         </div>
-        <div class="controls-hint">DRAG TO ROTATE • SCROLL TO ZOOM • CLICK TO EXPLODE</div>
     </div>
 </div>
 
 <script>
-    let scene, camera, renderer, controls, iphoneGroup;
-    let isExploded = false;
+    let scene, camera, renderer, controls, phone;
+    let exploded = false;
 
-    // Part Database
-    const partsInfo = {
-        "OLED Display": "The Super Retina XDR display with ProMotion technology. It features an always-on display and high peak brightness.",
-        "A17 Bionic Chip": "The world's first 3nm chip, containing billions of transistors for extreme performance and efficiency.",
-        "Battery": "High-capacity Lithium-ion battery with internal management for peak performance capability.",
-        "Taptic Engine": "Precise haptic feedback motor that simulates the feel of physical buttons.",
-        "Camera Module": "48MP main sensor with advanced image signal processing and sensor-shift stabilization."
+    // Detailed Parts Data
+    const database = {
+        "OLED Display": "Super Retina XDR OLED panel with 120Hz ProMotion. It's the primary interface between user and hardware.",
+        "FaceID Array": "Contains the Dot Projector and Infrared Camera for secure facial authentication.",
+        "A17 Bionic Chip": "The brain of the iPhone. 3nm architecture with 6-core GPU for console-level gaming performance.",
+        "Main Battery": "Lithium-ion cells configured in an L-shape for maximum energy density and capacity.",
+        "Triple Camera System": "48MP Main, Ultra Wide, and Telephoto lenses with LiDAR for depth mapping.",
+        "Taptic Engine": "Advanced linear actuator providing haptic feedback that mimics physical textures.",
+        "Motherboard": "The central PCB connecting the CPU, RAM, and Storage modules in a compact stacked design.",
+        "USB-C Port": "High-speed data transfer and charging port, replacing the traditional Lightning connector."
     };
 
     function init() {
         scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x050505);
+        scene.background = new THREE.Color(0x020202);
 
-        camera = new THREE.PerspectiveCamera(45, (window.innerWidth - 300) / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 0, 8);
+        camera = new THREE.PerspectiveCamera(45, (window.innerWidth - 320) / window.innerHeight, 0.1, 1000);
+        camera.position.set(5, 2, 8);
 
-        renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-        renderer.setSize(window.innerWidth - 300, window.innerHeight);
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth - 320, window.innerHeight);
         renderer.setPixelRatio(window.devicePixelRatio);
-        document.getElementById('canvas-wrapper').appendChild(renderer.domElement);
+        document.getElementById('canvas-box').appendChild(renderer.domElement);
 
-        // Lighting
-        const ambient = new THREE.AmbientLight(0xffffff, 0.4);
+        // Lights
+        const ambient = new THREE.AmbientLight(0xffffff, 0.3);
         scene.add(ambient);
+        
+        const spot = new THREE.SpotLight(0xffffff, 1);
+        spot.position.set(10, 20, 10);
+        scene.add(spot);
 
-        const pointLight = new THREE.PointLight(0x007aff, 1);
-        pointLight.position.set(10, 10, 10);
-        scene.add(pointLight);
-
-        const topLight = new THREE.DirectionalLight(0xffffff, 1);
-        topLight.position.set(0, 5, 5);
-        scene.add(topLight);
-
-        // Controls
         controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
-        controls.dampingFactor = 0.05;
 
-        iphoneGroup = new THREE.Group();
-        scene.add(iphoneGroup);
+        phone = new THREE.Group();
+        scene.add(phone);
 
-        createInteractiveModel();
-        animate();
+        buildInternalParts();
+        render();
     }
 
-    function createInteractiveModel() {
-        // Clear previous
-        while(iphoneGroup.children.length > 0) iphoneGroup.remove(iphoneGroup.children[0]);
-
-        // Creating Layered Parts (Representing internal components)
-        const layers = [
-            { name: "OLED Display", color: 0x111111, z: 0.4, size: [2.5, 5, 0.05] },
-            { name: "A17 Bionic Chip", color: 0x333333, z: 0.1, size: [0.8, 0.8, 0.1] },
-            { name: "Battery", color: 0x1a1a1a, z: -0.1, size: [1.8, 3.8, 0.15] },
-            { name: "Taptic Engine", color: 0x444444, z: -0.1, size: [0.5, 0.3, 0.1], offset: [0, -1.5, 0] },
-            { name: "Camera Module", color: 0x555555, z: -0.4, size: [1, 1, 0.3], offset: [0.6, 1.8, 0] }
+    function buildInternalParts() {
+        const parts = [
+            { name: "OLED Display", color: 0x0a0a0a, size: [2.5, 5, 0.05], z: 0.6 },
+            { name: "FaceID Array", color: 0x222222, size: [1, 0.2, 0.1], z: 0.5, y: 2.2 },
+            { name: "Motherboard", color: 0x0a3d1d, size: [1, 2.5, 0.1], z: 0.2, x: 0.6 },
+            { name: "A17 Bionic Chip", color: 0x333333, size: [0.6, 0.6, 0.12], z: 0.3, x: 0.6, y: 0.5 },
+            { name: "Main Battery", color: 0x151515, size: [1.2, 3.8, 0.2], z: 0, x: -0.5 },
+            { name: "Triple Camera System", color: 0x222222, size: [1, 1, 0.3], z: -0.4, x: 0.6, y: 1.8 },
+            { name: "Taptic Engine", color: 0x555555, size: [0.8, 0.4, 0.15], z: -0.2, y: -2 },
+            { name: "USB-C Port", color: 0x888888, size: [0.4, 0.1, 0.2], z: 0, y: -2.45 }
         ];
 
-        layers.forEach((l, i) => {
-            const geometry = new THREE.BoxGeometry(...l.size);
-            const material = new THREE.MeshStandardMaterial({ 
-                color: l.color, 
-                metalness: 0.7, 
-                roughness: 0.2,
-                emissive: 0x000000
+        parts.forEach(p => {
+            const geo = new THREE.BoxGeometry(...p.size);
+            const mat = new THREE.MeshStandardMaterial({ 
+                color: p.color, 
+                metalness: 0.8, 
+                roughness: 0.1,
+                emissive: 0x000000 
             });
-            const mesh = new THREE.Mesh(geometry, material);
-            mesh.name = l.name;
-            if(l.offset) mesh.position.set(l.offset[0], l.offset[1], l.offset[2]);
-            iphoneGroup.add(mesh);
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.name = p.name;
+            mesh.position.set(p.x || 0, p.y || 0, 0); // Start at 0 on Z
+            phone.add(mesh);
         });
     }
 
@@ -158,62 +153,58 @@
     const mouse = new THREE.Vector2();
 
     window.addEventListener('click', (e) => {
-        if(e.clientX < 300) return;
+        if(e.clientX < 320) return;
 
-        mouse.x = ((e.clientX - 300) / (window.innerWidth - 300)) * 2 - 1;
+        mouse.x = ((e.clientX - 320) / (window.innerWidth - 320)) * 2 - 1;
         mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
 
         raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObjects(iphoneGroup.children);
+        const hits = raycaster.intersectObjects(phone.children);
 
-        if (intersects.length > 0) {
-            const part = intersects[0].object;
+        if (hits.length > 0) {
+            const selected = hits[0].object;
             
-            if (!isExploded) {
-                // Explode Animation
-                iphoneGroup.children.forEach((child, index) => {
+            if (!exploded) {
+                // Professional Explode Transition
+                phone.children.forEach((child, i) => {
                     gsap.to(child.position, {
-                        z: index * 1.5 - 2,
-                        duration: 1.5,
-                        ease: "expo.out"
+                        z: i * 1.4 - 4, 
+                        duration: 1.8, 
+                        ease: "power4.out"
                     });
                 });
-                isExploded = true;
+                exploded = true;
             } else {
-                // Show info
-                document.getElementById('detail-panel').style.display = 'block';
-                document.getElementById('part-title').innerText = part.name;
-                document.getElementById('part-desc').innerText = partsInfo[part.name] || "Internal component detail.";
+                // Show Info & Highlight
+                const box = document.getElementById('info-box');
+                box.style.display = 'block';
+                document.getElementById('title').innerText = selected.name;
+                document.getElementById('desc').innerText = database[selected.name];
                 
-                // Highlight part
-                iphoneGroup.children.forEach(c => c.material.emissive.setHex(0x000000));
-                part.material.emissive.setHex(0x003366);
+                // Reset colors and highlight selected
+                phone.children.forEach(c => c.material.emissive.setHex(0x000000));
+                selected.material.emissive.setHex(0x002244);
             }
         } else {
-            // Reset if clicked empty space
-            if(isExploded) {
-                iphoneGroup.children.forEach(child => gsap.to(child.position, { z: 0, duration: 1 }));
-                isExploded = false;
-                document.getElementById('detail-panel').style.display = 'none';
+            // Collapse if clicked empty space
+            if(exploded) {
+                phone.children.forEach(c => gsap.to(c.position, { z: 0, duration: 1.2, ease: "expo.inOut" }));
+                exploded = false;
+                document.getElementById('info-box').style.display = 'none';
             }
         }
     });
 
-    function animate() {
-        requestAnimationFrame(animate);
+    function render() {
+        requestAnimationFrame(render);
         controls.update();
         renderer.render(scene, camera);
     }
 
-    function changeModel(name) {
-        alert("Loading data for: " + name);
-        createInteractiveModel();
-    }
-
     window.addEventListener('resize', () => {
-        camera.aspect = (window.innerWidth - 300) / window.innerHeight;
+        camera.aspect = (window.innerWidth - 320) / window.innerHeight;
         camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth - 300, window.innerHeight);
+        renderer.setSize(window.innerWidth - 320, window.innerHeight);
     });
 
     init();
