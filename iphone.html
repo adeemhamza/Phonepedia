@@ -3,171 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iPhone Parts Visualizer</title>
+    <title>iPhone Anatomy Explorer</title>
     <style>
         :root {
-            --apple-grey: #f5f5f7;
-            --apple-blue: #007aff;
-            --text-dark: #1d1d1f;
+            --bg: #f5f5f7;
+            --card: #ffffff;
+            --accent: #007aff;
+            --text: #1d1d1f;
         }
 
         body {
             margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #ffffff;
-            color: var(--text-dark);
+            font-family: -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
             display: flex;
-            height: 100vh;
-            overflow: hidden;
         }
 
-        /* Sidebar Style */
+        /* Sidebar */
         #sidebar {
-            width: 280px;
-            background-color: var(--apple-grey);
+            width: 260px;
+            height: 100vh;
+            background: #fff;
             border-right: 1px solid #d2d2d7;
             padding: 30px 20px;
-            display: flex;
-            flex-direction: column;
+            position: fixed;
         }
 
-        h1 { font-size: 22px; margin-bottom: 20px; font-weight: 600; }
-
         .model-btn {
-            background: white;
-            border: 1px solid #d2d2d7;
+            width: 100%;
             padding: 15px;
+            margin-bottom: 12px;
+            border: 1px solid #d2d2d7;
             border-radius: 12px;
-            margin-bottom: 10px;
+            background: #fff;
             cursor: pointer;
-            transition: 0.3s;
+            font-size: 15px;
             font-weight: 500;
+            transition: 0.3s;
             text-align: left;
         }
 
-        .model-btn:hover { border-color: var(--apple-blue); background: #fafafa; }
-        .model-btn.active { background: var(--apple-blue); color: white; border-color: var(--apple-blue); }
-
-        /* Main Content Area */
-        #content-area {
-            flex-grow: 1;
-            padding: 40px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .model-btn:hover { background: #f0f0f2; }
+        .model-btn.active { 
+            background: var(--accent); 
+            color: white; 
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(0,122,255,0.3);
         }
 
-        #model-title { font-size: 32px; margin-bottom: 30px; }
+        /* Main Content */
+        #main-content {
+            margin-left: 300px;
+            padding: 50px;
+            width: 100%;
+        }
+
+        header { margin-bottom: 40px; }
+        h1 { font-size: 34px; font-weight: 700; margin: 0; }
+        p.desc { color: #86868b; font-size: 18px; margin-top: 10px; }
 
         /* Parts Grid */
-        #parts-grid {
+        #parts-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 25px;
-            width: 100%;
-            max-width: 1000px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: 0.6s all ease;
+        }
+
+        #parts-container.show {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .part-card {
-            background: #fff;
-            border: 1px solid #e5e5e5;
+            background: var(--card);
             border-radius: 20px;
-            padding: 15px;
-            text-align: center;
-            transition: 0.3s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            padding: 20px;
+            border: 1px solid #e5e5e5;
+            transition: 0.4s cubic-bezier(0.2, 0, 0.2, 1);
         }
 
-        .part-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .part-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        }
 
-        .part-card img {
+        .image-wrapper {
             width: 100%;
-            height: 180px;
-            object-fit: contain;
-            border-radius: 10px;
+            height: 200px;
             background: #f9f9f9;
-            margin-bottom: 15px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .part-card h3 { font-size: 18px; margin: 10px 0 5px 0; color: var(--apple-blue); }
-        .part-card p { font-size: 13px; color: #666; line-height: 1.4; }
+        .image-wrapper img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
 
-        .empty-state { color: #888; margin-top: 100px; font-size: 18px; }
+        .part-info h3 { margin: 0 0 10px 0; font-size: 18px; }
+        .part-info p { margin: 0; font-size: 14px; color: #666; line-height: 1.5; }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #eef6ff;
+            color: var(--accent);
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
 
 <div id="sidebar">
-    <h1>iPhone Models</h1>
-    <div class="model-btn" onclick="showParts('iphone15')">iPhone 15 Pro Max</div>
-    <div class="model-btn" onclick="showParts('iphone14')">iPhone 14 Pro</div>
-    <div class="model-btn" onclick="showParts('iphone13')">iPhone 13</div>
+    <h1>Models</h1>
+    <p style="color: #888; font-size: 12px; margin-bottom: 20px;">Select iPhone for details</p>
+    <button class="model-btn" onclick="loadAnatomy('iphone15')">iPhone 15 Pro Max</button>
+    <button class="model-btn" onclick="loadAnatomy('iphone14')">iPhone 14 Pro</button>
+    <button class="model-btn" onclick="loadAnatomy('iphone13')">iPhone 13</button>
 </div>
 
-<div id="content-area">
-    <div id="initial-msg" class="empty-state">Select a model to see its internal parts</div>
-    <h1 id="model-title"></h1>
-    <div id="parts-grid"></div>
+<div id="main-content">
+    <header id="welcome-text">
+        <h1>Educational Anatomy</h1>
+        <p class="desc">Please select a model from the left to explore its internal elements.</p>
+    </header>
+
+    <div id="parts-container">
+        </div>
 </div>
 
 <script>
-    // Data Structure for iPhone Parts
-    const iphoneData = {
+    const data = {
         'iphone15': {
-            name: "iPhone 15 Pro Max",
+            title: "iPhone 15 Pro Max Anatomy",
+            description: "Showing all major internal components of the Titanium 15 Pro series.",
             parts: [
-                { title: "A17 Bionic Chip", desc: "First 3nm chip with 6-core GPU.", img: "https://vkrepair.com/wp-content/uploads/2023/10/A17-Pro-Chip.jpg" },
-                { title: "Titanium Chassis", desc: "Space-grade titanium for light weight.", img: "https://www.apple.com/newsroom/images/2023/09/apple-unveils-iphone-15-pro-and-iphone-15-pro-max/article/Apple-iPhone-15-Pro-lineup-titanium-design-230912_inline.jpg.large.jpg" },
-                { title: "USB-C Module", desc: "High-speed 10Gbps data transfer port.", img: "https://9to5mac.com/wp-content/uploads/sites/6/2023/08/iphone-15-usb-c-port.jpg" },
-                { title: "Tetraprism Lens", desc: "5x Optical zoom periscope camera system.", img: "https://cdn.dxomark.com/wp-content/uploads/medias/post-154941/Apple-iPhone-15-Pro-Max_camera-module.jpg" }
-            ]
-        },
-        'iphone14': {
-            name: "iPhone 14 Pro",
-            parts: [
-                { title: "A16 Bionic", desc: "The brain behind Dynamic Island.", img: "https://9to5mac.com/wp-content/uploads/sites/6/2022/09/A16-Bionic.jpg" },
-                { title: "48MP Sensor", desc: "High-resolution main camera sensor.", img: "https://i.ytimg.com/vi/S8Wv8-X97m4/maxresdefault.jpg" },
-                { title: "Battery Pack", desc: "Optimized Li-ion battery for 14 Pro.", img: "https://guide-images.ifixit.com/igi/O1vGZf4v2L6U3q2J.large" }
-            ]
-        },
-        'iphone13': {
-            name: "iPhone 13",
-            parts: [
-                { title: "A15 Bionic", desc: "Efficient and powerful 5nm chip.", img: "https://www.apple.com/newsroom/images/product/iphone/standard/Apple_A15-Bionic-GPU_09142021_big.jpg.large.jpg" },
-                { title: "Dual Camera", desc: "Diagonal camera layout system.", img: "https://guide-images.ifixit.com/igi/2kY1N6CRAuP1v2W4.large" }
+                { name: "Super Retina XDR Display", category: "Display", desc: "6.7-inch OLED panel with ProMotion and Always-On technology.", img: "https://guide-images.ifixit.com/igi/2kY1N6CRAuP1v2W4.large" },
+                { name: "A17 Pro Chip", category: "Processor", desc: "The first 3nm chip in a smartphone with 6-core GPU.", img: "https://vkrepair.com/wp-content/uploads/2023/10/A17-Pro-Chip.jpg" },
+                { name: "Tetraprism Telephoto", category: "Camera", desc: "Advanced 5x optical zoom periscope camera system.", img: "https://cdn.dxomark.com/wp-content/uploads/medias/post-154941/Apple-iPhone-15-Pro-Max_camera-module.jpg" },
+                { name: "Internal Battery", category: "Power", desc: "4,441 mAh high-density lithium-ion battery.", img: "https://guide-images.ifixit.com/igi/O1vGZf4v2L6U3q2J.large" },
+                { name: "USB-C Assembly", category: "Charging", desc: "USB 3 speed controller and charging port connector.", img: "https://9to5mac.com/wp-content/uploads/sites/6/2023/08/iphone-15-usb-c-port.jpg" },
+                { name: "Taptic Engine", category: "Haptics", desc: "The motor that generates precise vibrations and clicks.", img: "https://guide-images.ifixit.com/igi/YcTjP6R1MhR2R6E1.large" }
             ]
         }
     };
 
-    function showParts(modelId) {
-        // Remove empty state message
-        document.getElementById('initial-msg').style.display = 'none';
-        
-        const data = iphoneData[modelId];
-        const grid = document.getElementById('parts-grid');
-        const title = document.getElementById('model-title');
-        
-        // Update Title
-        title.innerText = data.name;
-        
-        // Highlight active button
-        const buttons = document.querySelectorAll('.model-btn');
-        buttons.forEach(btn => btn.classList.remove('active'));
-        event.currentTarget.classList.add('active');
+    function loadAnatomy(modelId) {
+        const container = document.getElementById('parts-container');
+        const header = document.getElementById('welcome-text');
+        const modelData = data[modelId];
 
-        // Clear and Add New Parts
-        grid.innerHTML = '';
-        data.parts.forEach(part => {
-            const card = document.createElement('div');
-            card.className = 'part-card';
-            card.innerHTML = `
-                <img src="${part.img}" alt="${part.title}" onerror="this.src='https://via.placeholder.com/250x180?text=Part+Image'">
-                <h3>${part.title}</h3>
-                <p>${part.desc}</p>
-            `;
-            grid.appendChild(card);
-        });
+        // Highlight Active Button
+        document.querySelectorAll('.model-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+
+        // Reset Animation
+        container.classList.remove('show');
+
+        if (modelData) {
+            setTimeout(() => {
+                header.innerHTML = `<h1>${modelData.title}</h1><p class="desc">${modelData.description}</p>`;
+                
+                container.innerHTML = modelData.parts.map(part => `
+                    <div class="part-card">
+                        <span class="badge">${part.category}</span>
+                        <div class="image-wrapper">
+                            <img src="${part.img}" alt="${part.name}" onerror="this.src='https://via.placeholder.com/300x200?text=Part+Image'">
+                        </div>
+                        <div class="part-info">
+                            <h3>${part.name}</h3>
+                            <p>${part.desc}</p>
+                        </div>
+                    </div>
+                `).join('');
+                
+                container.classList.add('show');
+            }, 300);
+        } else {
+            alert("More models coming soon! Please check iPhone 15 Pro Max.");
+        }
     }
 </script>
 
