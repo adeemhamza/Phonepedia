@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iPhone Anatomy Explorer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"></script>
+    <style>
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; overflow: hidden; display: flex; }
+        
+        /* Sidebar for Model List */
+        #sidebar {
+            width: 250px; height: 100vh; background: #1a1a1a; color: white;
+            padding: 20px; z-index: 10; border-right: 1px solid #333;
+        }
+        
+        .model-item {
+            padding: 15px; margin-bottom: 10px; background: #333;
+            cursor: pointer; border-radius: 8px; transition: 0.3s;
+        }
+        
+        .model-item:hover { background: #007aff; }
+
+        /* Info Panel */
+        #info-panel {
+            position: absolute; right: 20px; top: 20px; width: 300px;
+            background: rgba(255, 255, 255, 0.9); padding: 20px;
+            border-radius: 12px; display: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        #canvas-container { flex-grow: 1; height: 100vh; background: #050505; }
+    </style>
+</head>
+<body>
+
+<div id="sidebar">
+    <h2>iPhone Models</h2>
+    <div class="model-item" onclick="loadModel('iphone15')">iPhone 15 Pro</div>
+    <div class="model-item" onclick="loadModel('iphone14')">iPhone 14</div>
+    <div class="model-item" onclick="loadModel('iphone13')">iPhone 13</div>
+</div>
+
+<div id="info-panel">
+    <h3 id="part-name">Part Name</h3>
+    <p id="part-detail">Click on a component to see its details and function.</p>
+</div>
+
+<div id="canvas-container"></div>
+
+<script>
+    // Three.js Basic Setup
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth - 250, window.innerHeight);
+    document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+    // Lighting
+    const light = new THREE.AmbientLight(0xffffff, 1);
+    scene.add(light);
+    const pointLight = new THREE.PointLight(0xffffff, 1);
+    pointLight.position.set(5, 5, 5);
+    scene.add(pointLight);
+
+    camera.position.z = 5;
+
+    // Placeholder for the iPhone Group
+    let iphoneGroup = new THREE.Group();
+    scene.add(iphoneGroup);
+
+    // Function to simulate exploded view
+    let isExploded = false;
+
+    function createDummyModel() {
+        // Cleaning previous model
+        while(iphoneGroup.children.length > 0) iphoneGroup.remove(iphoneGroup.children[0]);
+
+        // Creating dummy parts (In real app, you will load .gltf here)
+        const parts = [
+            { name: 'Display Panel', color: 0x000000, pos: 0 },
+            { name: 'A17 Bionic Chip', color: 0x555555, pos: 0 },
+            { name: 'Lithium Battery', color: 0x00ff00, pos: 0 },
+            { name: 'Taptic Engine', color: 0x888888, pos: 0 }
+        ];
+
+        parts.forEach((p, index) => {
+            const geometry = new THREE.BoxGeometry(2, 4, 0.2);
+            const material = new THREE.MeshStandardMaterial({ color: p.color });
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.userData = { name: p.name, detail: "High-performance component of the iPhone." };
+            iphoneGroup.add(mesh);
+        });
+    }
+
+    function toggleExplosion() {
+        iphoneGroup.children.forEach((mesh, i) => {
+            gsap.to(mesh.position, {
+                z: isExploded ? 0 : i * 0.8, // Parts ko z-axis par alag karna
+                duration: 1,
+                ease: "power2.out"
+            });
+        });
+        isExploded = !isExploded;
+    }
+
+    // Raycaster for clicking parts
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    window.addEventListener('click', (event) => {
+        mouse.x = ((event.clientX - 250) / (window.innerWidth - 250)) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(iphoneGroup.children);
+
+        if (intersects.length > 0) {
+            const clickedPart = intersects[0].object;
+            
+            // If model is not exploded, explode it first
+            if(!isExploded) {
+                toggleExplosion();
+            } else {
+                // Show Details
+                document.getElementById('info-panel').style.display = 'block';
+                document.getElementById('part-name').innerText = clickedPart.userData.name;
+                document.getElementById('part-detail').innerText = clickedPart.userData.detail;
+            }
+        }
+    });
+
+    function animate() {
+        requestAnimationFrame(animate);
+        iphoneGroup.rotation.y += 0.005;
+        renderer.render(scene, camera);
+    }
+
+    function loadModel(modelName) {
+        console.log("Loading " + modelName);
+        createDummyModel();
+        isExploded = false;
+        document.getElementById('info-panel').style.display = 'none';
+    }
+
+    createDummyModel();
+    animate();
+</script>
+</body>
+</html>
