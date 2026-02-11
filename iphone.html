@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iPhone 1 to 17 Pro Max - Split View</title>
+    <title>iPhone Ultimate Specs Sheet</title>
     <style>
         /* --- Apple Aesthetic Theme --- */
         :root {
@@ -13,10 +13,11 @@
             --text-light: #86868b;
             --accent: #0071e3;
             --border: #d2d2d7;
+            --header-bg: #fbfbfd;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             margin: 0;
             display: flex;
@@ -24,281 +25,354 @@
             overflow: hidden;
         }
 
-        /* --- 1. Sidebar (Navigation) --- */
+        /* --- Sidebar --- */
         .sidebar {
-            width: 260px;
+            width: 280px;
             background: var(--sidebar-bg);
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             overflow-y: auto;
             flex-shrink: 0;
-            padding: 20px 0;
         }
 
-        .sidebar-title {
-            padding: 0 20px 15px;
-            font-size: 13px;
+        .sidebar-header {
+            padding: 20px;
+            font-size: 12px;
             font-weight: 600;
             color: var(--text-light);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(5px);
+            border-bottom: 1px solid var(--border);
         }
 
         .nav-item {
-            padding: 12px 20px;
+            padding: 14px 20px;
             cursor: pointer;
             font-size: 14px;
             font-weight: 500;
             color: var(--text-main);
-            border-left: 3px solid transparent;
-            display: flex;
-            justify-content: space-between;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.2s;
         }
 
-        .nav-item:hover { background-color: #f2f2f2; }
-        
+        .nav-item:hover { background-color: #f5f5f7; }
+
         .nav-item.active {
-            background-color: #e8f2ff;
-            color: var(--accent);
-            border-left: 3px solid var(--accent);
-            font-weight: 600;
+            background-color: #0071e3;
+            color: #fff;
         }
 
-        /* --- 2. Main Content Area (Split View) --- */
+        /* --- Main Content (Split View) --- */
         .main-content {
             flex: 1;
-            display: flex; /* Flexbox for Left Image / Right Table */
-            overflow: hidden;
+            display: flex;
             background: #fff;
+            overflow: hidden;
         }
 
-        /* Left Side: Image */
-        .phone-display {
-            flex: 0.8; /* 40% width approx */
-            background-color: #fbfbfd;
+        /* Left: Phone Image */
+        .image-section {
+            width: 40%;
+            background-color: #fafafa;
+            border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            border-right: 1px solid var(--border);
+            justify-content: center;
             padding: 40px;
-            position: relative;
         }
 
         .phone-img {
-            max-height: 70vh;
+            max-height: 60vh;
             max-width: 100%;
             object-fit: contain;
-            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.2));
-            animation: floatIn 0.6s ease-out;
-        }
-
-        .phone-header-text {
-            margin-top: 30px;
-            text-align: center;
+            filter: drop-shadow(0 15px 35px rgba(0,0,0,0.2));
+            transition: transform 0.3s ease;
         }
         
-        .phone-title { font-size: 32px; font-weight: 700; margin-bottom: 5px; }
-        .phone-tagline { font-size: 16px; color: var(--text-light); font-style: italic; }
-
-        @keyframes floatIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .phone-name-display {
+            margin-top: 30px;
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
         }
 
-        /* Right Side: Table Details */
-        .specs-container {
-            flex: 1.2; /* 60% width approx */
+        /* Right: Detailed Table */
+        .details-section {
+            width: 60%;
             overflow-y: auto;
-            padding: 40px 50px;
+            padding: 0;
         }
 
-        .specs-header {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        /* --- Apple Style Table --- */
         .specs-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 15px;
+            font-size: 13px; /* Slightly smaller for dense data */
         }
 
         .specs-table th {
             text-align: left;
-            padding: 16px 10px;
-            color: var(--text-light);
-            font-weight: 600;
-            width: 35%;
-            border-bottom: 1px solid #e5e5e5;
+            padding: 12px 20px;
+            background-color: #f5f5f7;
+            color: var(--text-main);
+            font-weight: 700;
+            text-transform: uppercase;
+            border-top: 1px solid #e0e0e0;
+            border-bottom: 1px solid #e0e0e0;
         }
 
         .specs-table td {
-            padding: 16px 10px;
-            color: var(--text-main);
-            font-weight: 500;
-            border-bottom: 1px solid #e5e5e5;
-            line-height: 1.5;
+            padding: 12px 20px;
+            color: #333;
+            line-height: 1.6;
+            vertical-align: top;
         }
 
-        .specs-table tr:last-child th, 
-        .specs-table tr:last-child td {
-            border-bottom: none;
+        .category-row {
+            background-color: #fbfbfd;
         }
 
-        /* Mobile Responsive */
+        .label-cell {
+            width: 30%;
+            font-weight: 600;
+            color: var(--text-light);
+            border-right: 1px solid #f0f0f0;
+        }
+
+        .value-cell {
+            width: 70%;
+        }
+
+        /* Responsive */
         @media (max-width: 900px) {
-            .sidebar { display: none; } /* Hide sidebar on mobile for focus */
+            .sidebar { display: none; }
             .main-content { flex-direction: column; overflow-y: auto; }
-            .phone-display { flex: none; height: 400px; border-right: none; border-bottom: 1px solid var(--border); }
-            .specs-container { flex: none; }
+            .image-section { width: 100%; height: 400px; border-right: none; border-bottom: 1px solid var(--border); }
+            .details-section { width: 100%; }
         }
     </style>
 </head>
 <body>
 
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-title">Select Model</div>
+        <div class="sidebar-header">Select Model</div>
         </div>
 
     <div class="main-content">
         
-        <div class="phone-display">
-            <img id="display-img" src="" alt="iPhone" class="phone-img">
-            <div class="phone-header-text">
-                <div id="display-title" class="phone-title">iPhone</div>
-                <div id="display-tag" class="phone-tagline">Loading...</div>
-            </div>
+        <div class="image-section">
+            <img id="main-img" src="" alt="iPhone" class="phone-img">
+            <div id="main-title" class="phone-name-display">iPhone</div>
         </div>
 
-        <div class="specs-container">
-            <div class="specs-header">Technical Specifications</div>
-            <table class="specs-table">
-                <tbody id="specs-body">
-                    </tbody>
-            </table>
+        <div class="details-section">
+            <table class="specs-table" id="specs-table">
+                </table>
         </div>
-
     </div>
 
     <script>
-        // --- DATA: iPhone 1 to 17 Pro Max ---
-        const phones = [
-            { name: "iPhone (2G)", year: "2007", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/IPhone_2G_PSD_Mock.png/430px-IPhone_2G_PSD_Mock.png", tag: "Apple reinvents the phone.", 
-              specs: { "Release Year": "2007", "Chipset": "Samsung RISC (412 MHz)", "RAM": "128 MB", "Storage": "4GB / 8GB", "Display": "3.5 inch LCD", "Resolution": "320 x 480 pixels", "Rear Camera": "2 MP", "Front Camera": "None", "Battery": "1400 mAh", "OS Launch": "iPhone OS 1", "Body Material": "Aluminum & Plastic", "Security": "Slide to Unlock" } },
-
-            { name: "iPhone 3G", year: "2008", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/IPhone_3G_PSD_Mock.png/430px-IPhone_3G_PSD_Mock.png", tag: "Twice as fast.", 
-              specs: { "Release Year": "2008", "Chipset": "Samsung ARM 11", "RAM": "128 MB", "Storage": "8GB / 16GB", "Display": "3.5 inch LCD", "Rear Camera": "2 MP", "Front Camera": "None", "Battery": "1150 mAh", "Connectivity": "3G Support", "Body": "Polycarbonate (Plastic)" } },
-
-            { name: "iPhone 3GS", year: "2009", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/IPhone_3GS_PSD_Mock.png/430px-IPhone_3GS_PSD_Mock.png", tag: "The fastest iPhone yet.", 
-              specs: { "Release Year": "2009", "Chipset": "Samsung Cortex A8", "RAM": "256 MB", "Storage": "Up to 32GB", "Display": "3.5 inch LCD", "Rear Camera": "3 MP (Video)", "Battery": "1219 mAh", "OS Launch": "iPhone OS 3" } },
-
-            { name: "iPhone 4", year: "2010", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/IPhone_4_PSD_Mock.png/430px-IPhone_4_PSD_Mock.png", tag: "This changes everything.", 
-              specs: { "Release Year": "2010", "Chipset": "Apple A4", "RAM": "512 MB", "Storage": "8GB - 32GB", "Display": "3.5 inch Retina", "Rear Camera": "5 MP (720p)", "Front Camera": "VGA (FaceTime)", "Battery": "1420 mAh", "Build": "Glass & Steel" } },
-
-            { name: "iPhone 4S", year: "2011", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/IPhone_4S_No_Shadow.png/430px-IPhone_4S_No_Shadow.png", tag: "The most amazing iPhone yet.", 
-              specs: { "Release Year": "2011", "Chipset": "Apple A5", "RAM": "512 MB", "Storage": "8GB - 64GB", "Display": "3.5 inch Retina", "Rear Camera": "8 MP (1080p)", "AI Assistant": "Siri Introduced", "Battery": "1432 mAh" } },
-
-            { name: "iPhone 5", year: "2012", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/IPhone_5.png/430px-IPhone_5.png", tag: "Loving it is easy.", 
-              specs: { "Release Year": "2012", "Chipset": "Apple A6", "RAM": "1 GB", "Storage": "16GB - 64GB", "Display": "4.0 inch Retina", "Rear Camera": "8 MP", "Connector": "Lightning Port", "Battery": "1440 mAh", "Connectivity": "4G LTE" } },
-
-            { name: "iPhone 5s", year: "2013", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/IPhone_5s_golden.png/430px-IPhone_5s_golden.png", tag: "Forward thinking.", 
-              specs: { "Release Year": "2013", "Chipset": "Apple A7 (64-bit)", "RAM": "1 GB", "Display": "4.0 inch Retina", "Security": "Touch ID (Fingerprint)", "Rear Camera": "8 MP (True Tone Flash)", "Battery": "1560 mAh", "Motion Coprocessor": "M7" } },
-
-            { name: "iPhone 6 / 6 Plus", year: "2014", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/IPhone6_silver_frontface.png/430px-IPhone6_silver_frontface.png", tag: "Bigger than bigger.", 
-              specs: { "Release Year": "2014", "Chipset": "Apple A8", "RAM": "1 GB", "Display": "4.7\" / 5.5\" Retina HD", "Rear Camera": "8 MP", "Payments": "Apple Pay (NFC)", "Battery": "1810 / 2915 mAh", "Design": "Curved Aluminum" } },
-
-            { name: "iPhone 6s / 6s Plus", year: "2015", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/IPhone_6s_Rose_Gold.png/430px-IPhone_6s_Rose_Gold.png", tag: "The only thing changed is everything.", 
-              specs: { "Release Year": "2015", "Chipset": "Apple A9", "RAM": "2 GB", "Display": "4.7\" / 5.5\" (3D Touch)", "Rear Camera": "12 MP (4K Video)", "Front Camera": "5 MP", "Battery": "1715 / 2750 mAh", "Build": "7000 Series Aluminum" } },
-
-            { name: "iPhone 7 Plus", year: "2016", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/IPhone_7_Plus_Jet_Black.svg/440px-IPhone_7_Plus_Jet_Black.svg.png", tag: "This is 7.", 
-              specs: { "Release Year": "2016", "Chipset": "Apple A10 Fusion", "RAM": "3 GB", "Display": "5.5 inch Retina HD", "Rear Camera": "Dual 12 MP (Portrait)", "Water Proofing": "IP67", "Audio": "Stereo Speakers (No Jack)", "Home Button": "Solid State (Taptic)" } },
-
-            { name: "iPhone 8 Plus", year: "2017", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/IPhone_8_Plus_Gold.png/440px-IPhone_8_Plus_Gold.png", tag: "A new generation.", 
-              specs: { "Release Year": "2017", "Chipset": "Apple A11 Bionic", "RAM": "3 GB", "Display": "5.5 inch Retina HD", "Charging": "Wireless Charging", "Back": "Glass Back", "Rear Camera": "Dual 12 MP" } },
-
-            { name: "iPhone X", year: "2017", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/IPhone_X_vector.svg/400px-IPhone_X_vector.svg.png", tag: "Say hello to the future.", 
-              specs: { "Release Year": "2017", "Chipset": "Apple A11 Bionic", "RAM": "3 GB", "Display": "5.8 inch Super Retina OLED", "Security": "Face ID", "Design": "Notch, Edge-to-Edge", "Rear Camera": "Dual 12 MP (Dual OIS)", "Body": "Stainless Steel" } },
-
-            { name: "iPhone XS Max", year: "2018", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/IPhone_XS_Max_Silver.svg/440px-IPhone_XS_Max_Silver.svg.png", tag: "Welcome to the big screens.", 
-              specs: { "Release Year": "2018", "Chipset": "Apple A12 Bionic", "RAM": "4 GB", "Display": "6.5 inch OLED", "SIM": "Dual SIM (eSIM)", "Rear Camera": "Dual 12 MP (Smart HDR)", "Water Proofing": "IP68" } },
-
-            { name: "iPhone 11 Pro Max", year: "2019", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/IPhone_11_Pro_Max_Midnight_Green.svg/440px-IPhone_11_Pro_Max_Midnight_Green.svg.png", tag: "Pro cameras. Pro display.", 
-              specs: { "Release Year": "2019", "Chipset": "Apple A13 Bionic", "RAM": "4 GB", "Display": "6.5 inch Super Retina XDR", "Rear Camera": "Triple 12 MP (Ultra Wide)", "Night Mode": "Yes", "Battery": "3969 mAh", "Back": "Matte Glass" } },
-
-            { name: "iPhone 12 Pro Max", year: "2020", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/IPhone_12_Pro_Max_Pacific_Blue.svg/440px-IPhone_12_Pro_Max_Pacific_Blue.svg.png", tag: "It's a leap year.", 
-              specs: { "Release Year": "2020", "Chipset": "Apple A14 Bionic (5nm)", "RAM": "6 GB", "Display": "6.7 inch OLED", "Connectivity": "5G", "Design": "Flat Edges, Ceramic Shield", "Rear Camera": "Triple 12 MP + LiDAR", "Charging": "MagSafe" } },
-
-            { name: "iPhone 13 Pro Max", year: "2021", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/IPhone_13_Pro_Max_Sierra_Blue.svg/440px-IPhone_13_Pro_Max_Sierra_Blue.svg.png", tag: "Oh. So. Pro.", 
-              specs: { "Release Year": "2021", "Chipset": "Apple A15 Bionic", "RAM": "6 GB", "Display": "6.7 inch ProMotion (120Hz)", "Rear Camera": "Cinematic Mode Video", "Battery": "4352 mAh (Best in Class)", "Storage": "Up to 1 TB" } },
-
-            { name: "iPhone 14 Pro Max", year: "2022", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/IPhone_14_Pro_Deep_Purple.svg/440px-IPhone_14_Pro_Deep_Purple.svg.png", tag: "Pro. Beyond.", 
-              specs: { "Release Year": "2022", "Chipset": "Apple A16 Bionic", "RAM": "6 GB", "Display": "Dynamic Island, Always-On", "Rear Camera": "48 MP Main Sensor", "Safety": "Crash Detection, Satellite SOS", "Battery": "4323 mAh" } },
-
-            { name: "iPhone 15 Pro Max", year: "2023", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/IPhone_15_Pro_Blue_Titanium_mock.png/440px-IPhone_15_Pro_Blue_Titanium_mock.png", tag: "Titanium.", 
-              specs: { "Release Year": "2023", "Chipset": "Apple A17 Pro (3nm)", "RAM": "8 GB", "Build": "Titanium Frame", "Port": "USB-C (USB 3)", "Rear Camera": "48 MP (5x Optical Zoom)", "Action Button": "Yes", "Gaming": "Ray Tracing Support" } },
-
-            { name: "iPhone 16 Pro Max", year: "2024", img: "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg", tag: "Built for Intelligence.", 
-              specs: { "Release Year": "2024", "Chipset": "Apple A18 Pro", "RAM": "8 GB", "Display": "6.9 inch Borderless", "AI": "Apple Intelligence Built-in", "Camera Control": "Dedicated Capacitive Button", "Rear Camera": "48MP Ultra-wide", "Battery": "4685 mAh" } },
-
-            { name: "iPhone 17 Pro Max", year: "2025 (Rumored)", img: "https://via.placeholder.com/350x650/000000/FFFFFF?text=iPhone+17+Pro+Max", tag: "The Future of Vision.", 
-              specs: { "Release Year": "2025 (Expected)", "Chipset": "Apple A19 Pro (2nm)", "RAM": "12 GB LPDDR6", "Display": "6.9\" Micro-LED ProMotion", "Front Camera": "24 MP", "Rear Camera": "Triple 48 MP System", "Security": "Under-Display Face ID", "Battery": "5000 mAh Stacked", "Cooling": "Vapor Chamber" } }
+        // --- DATA STORE ---
+        // Maine yahan iPhone 2G, iPhone X, aur iPhone 17 Pro Max (Aapka Data) add kiya hai.
+        // Aap isi format mein baqi phones copy-paste kar saktay hain.
+        
+        const phonesData = [
+            {
+                id: "iphone17promax",
+                model: "iPhone 17 Pro Max (Concept)",
+                image: "https://via.placeholder.com/400x700/000000/FFFFFF?text=iPhone+17+Pro+Max",
+                specs: {
+                    "Network": {
+                        "Technology": "GSM / CDMA / HSPA / EVDO / LTE / 5G",
+                        "Speed": "HSPA, LTE-A, 5G, EV-DO Rev.A 3.1 Mbps"
+                    },
+                    "Launch": {
+                        "Announced": "2025, September 09",
+                        "Status": "Available. Released 2025, September 19"
+                    },
+                    "Body": {
+                        "Dimensions": "163.4 x 78 x 8.8 mm (6.43 x 3.07 x 0.35 in)",
+                        "Weight": "233 g (8.22 oz)",
+                        "Build": "Glass front (Ceramic Shield 2), aluminum alloy frame, glass back",
+                        "SIM": "Nano-SIM + eSIM + eSIM (Intl) / Dual eSIM (USA)",
+                        "Protection": "IP68 dust/water resistant (up to 6m for 30 min)"
+                    },
+                    "Display": {
+                        "Type": "LTPO Super Retina XDR OLED, 120Hz, HDR10, Dolby Vision",
+                        "Size": "6.9 inches, 115.6 cm2 (~90.7% screen-to-body ratio)",
+                        "Resolution": "1320 x 2868 pixels, 19.5:9 ratio (~460 ppi density)",
+                        "Protection": "Ceramic Shield 2, Mohs level 5 Anti-reflective coating",
+                        "Brightness": "1000 nits (typ), 3000 nits (peak)"
+                    },
+                    "Platform": {
+                        "OS": "iOS 26, upgradable to iOS 26.2.1",
+                        "Chipset": "Apple A19 Pro (3 nm)",
+                        "CPU": "Hexa-core (2x4.26 GHz + 4x Efficiency)",
+                        "GPU": "Apple GPU (6-core graphics)"
+                    },
+                    "Memory": {
+                        "Card slot": "No",
+                        "Internal": "256GB 12GB RAM, 512GB 12GB RAM, 1TB 12GB RAM, 2TB 12GB RAM NVMe"
+                    },
+                    "Main Camera": {
+                        "Triple Setup": "48 MP (wide) + 48 MP (periscope telephoto) + 48 MP (ultrawide)",
+                        "Features": "Dual-LED dual-tone flash, HDR (photo/panorama)",
+                        "Video": "4K@120fps, 1080p@240fps, 10-bit HDR, Dolby Vision, ProRes, 3D Spatial"
+                    },
+                    "Selfie Camera": {
+                        "Single": "18 MP multi-aspect, f/1.9, 20mm (ultrawide)",
+                        "Features": "HDR, Dolby Vision HDR, 3D (spatial) audio",
+                        "Video": "4K@60fps, 1080p@120fps, gyro-EIS"
+                    },
+                    "Sound": {
+                        "Loudspeaker": "Yes, with stereo speakers",
+                        "3.5mm jack": "No"
+                    },
+                    "Comms": {
+                        "WLAN": "Wi-Fi 802.11 a/b/g/n/ac/6e/7, tri-band, hotspot",
+                        "Bluetooth": "6.0, A2DP, LE",
+                        "Positioning": "GPS (L1+L5), GLONASS, GALILEO, BDS, QZSS, NavIC",
+                        "NFC": "Yes",
+                        "USB": "USB Type-C 3.2 Gen 2, DisplayPort"
+                    },
+                    "Features": {
+                        "Sensors": "Face ID, accelerometer, gyro, proximity, compass, barometer, UWB (gen2)",
+                        "Emergency": "Emergency SOS, Messages and Find My via satellite"
+                    },
+                    "Battery": {
+                        "Type": "Li-Ion 5088 mAh, non-removable",
+                        "Charging": "Wired PD3.2 (50% in 20 min), 25W MagSafe, 4.5W Reverse Wired"
+                    },
+                    "Misc": {
+                        "Colors": "Silver, Cosmic Orange, Deep Blue",
+                        "Price": "$1,350.00 / €1,265.00"
+                    },
+                    "Tests": {
+                        "Performance": "AnTuTu: 2600583 (v10)",
+                        "Loudspeaker": "-26.2 LUFS (Good)",
+                        "Battery Life": "Active use score 17:58h"
+                    }
+                }
+            },
+            {
+                id: "iphone1",
+                model: "iPhone (Original 2G)",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/IPhone_2G_PSD_Mock.png/430px-IPhone_2G_PSD_Mock.png",
+                specs: {
+                    "Network": { "Technology": "GSM", "Speed": "GPRS, EDGE" },
+                    "Launch": { "Announced": "2007, January 09", "Status": "Discontinued" },
+                    "Body": { "Dimensions": "115 x 61 x 11.6 mm", "Weight": "135 g", "Build": "Aluminum back, plastic bottom", "SIM": "Mini-SIM" },
+                    "Display": { "Type": "TFT LCD", "Size": "3.5 inches", "Resolution": "320 x 480 pixels", "Protection": "Corning Gorilla Glass" },
+                    "Platform": { "OS": "iOS 1.0, upgradable to iOS 3.1.3", "Chipset": "Samsung RISC ARM 412 MHz", "GPU": "PowerVR MBX" },
+                    "Memory": { "Card slot": "No", "Internal": "4GB / 8GB / 16GB, 128MB RAM" },
+                    "Main Camera": { "Single": "2 MP", "Video": "No" },
+                    "Selfie Camera": { "Single": "No" },
+                    "Sound": { "Loudspeaker": "Yes", "3.5mm jack": "Yes" },
+                    "Comms": { "WLAN": "Wi-Fi 802.11b/g", "Bluetooth": "2.0 (Headset only)", "GPS": "No", "USB": "2.0 (30-pin)" },
+                    "Battery": { "Type": "Li-Ion 1400 mAh", "Charging": "Standard" }
+                }
+            },
+            {
+                id: "iphonex",
+                model: "iPhone X",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/IPhone_X_vector.svg/400px-IPhone_X_vector.svg.png",
+                specs: {
+                    "Network": { "Technology": "GSM / HSPA / LTE", "Speed": "HSPA 42.2/5.76 Mbps, LTE-A (3CA) Cat12" },
+                    "Launch": { "Announced": "2017, September 12", "Status": "Discontinued" },
+                    "Body": { "Dimensions": "143.6 x 70.9 x 7.7 mm", "Weight": "174 g", "Build": "Glass front/back, stainless steel frame" },
+                    "Display": { "Type": "Super Retina OLED, HDR10", "Size": "5.8 inches", "Resolution": "1125 x 2436 pixels" },
+                    "Platform": { "OS": "iOS 11.1.1, upgradable to iOS 16", "Chipset": "Apple A11 Bionic (10 nm)" },
+                    "Memory": { "Internal": "64GB / 256GB, 3GB RAM NVMe" },
+                    "Main Camera": { "Dual": "12 MP (wide) + 12 MP (telephoto)", "Features": "Quad-LED flash, HDR", "Video": "4K@24/30/60fps" },
+                    "Selfie Camera": { "Single": "7 MP, f/2.2", "Features": "Face ID" },
+                    "Comms": { "WLAN": "Wi-Fi 802.11 a/b/g/n/ac", "Bluetooth": "5.0", "NFC": "Yes", "USB": "Lightning, USB 2.0" },
+                    "Battery": { "Type": "Li-Ion 2716 mAh", "Charging": "15W wired, Qi wireless" }
+                }
+            },
+             {
+                id: "iphone15promax",
+                model: "iPhone 15 Pro Max",
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/IPhone_15_Pro_Blue_Titanium_mock.png/440px-IPhone_15_Pro_Blue_Titanium_mock.png",
+                specs: {
+                    "Network": { "Technology": "GSM / CDMA / HSPA / EVDO / LTE / 5G" },
+                    "Launch": { "Announced": "2023, September 12" },
+                    "Body": { "Dimensions": "159.9 x 76.7 x 8.3 mm", "Weight": "221 g", "Build": "Titanium frame" },
+                    "Display": { "Type": "LTPO Super Retina XDR OLED, 120Hz", "Size": "6.7 inches" },
+                    "Platform": { "OS": "iOS 17", "Chipset": "Apple A17 Pro (3 nm)" },
+                    "Memory": { "Internal": "256GB / 512GB / 1TB, 8GB RAM" },
+                    "Main Camera": { "Triple": "48 MP + 12 MP (Periscope 5x) + 12 MP (Ultrawide)", "Video": "4K@60fps, ProRes" },
+                    "Selfie Camera": { "Single": "12 MP, f/1.9" },
+                    "Comms": { "USB": "USB Type-C 3.0" },
+                    "Battery": { "Type": "Li-Ion 4441 mAh", "Charging": "Wired, 15W MagSafe" }
+                }
+            }
         ];
 
-        const sidebar = document.getElementById('sidebar');
-        const specsBody = document.getElementById('specs-body');
-        const displayImg = document.getElementById('display-img');
-        const displayTitle = document.getElementById('display-title');
-        const displayTag = document.getElementById('display-tag');
+        // --- RENDER LOGIC ---
 
-        // Populate Sidebar
-        phones.forEach((phone, index) => {
+        const sidebar = document.getElementById('sidebar');
+        const specsTable = document.getElementById('specs-table');
+        const mainImg = document.getElementById('main-img');
+        const mainTitle = document.getElementById('main-title');
+
+        // 1. Create Sidebar
+        phonesData.forEach((phone, index) => {
             const btn = document.createElement('div');
             btn.className = 'nav-item';
-            btn.innerHTML = `<span>${phone.name}</span> <span style="font-size:12px; opacity:0.6;">${phone.year}</span>`;
+            btn.innerText = phone.model;
             btn.onclick = () => loadPhone(index, btn);
             sidebar.appendChild(btn);
         });
 
-        // Function to Load Data
+        // 2. Load Data Function
         function loadPhone(index, clickedBtn) {
-            // Active Class Toggle
+            // Update Active State
             document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
             if(clickedBtn) clickedBtn.classList.add('active');
+            else sidebar.children[1].classList.add('active'); // Default first item
 
-            const data = phones[index];
+            const data = phonesData[index];
 
-            // 1. Update Image Section
-            displayImg.src = data.img;
-            displayTitle.innerText = data.name;
-            displayTag.innerText = data.tag;
-
-            // Image Animation Reset
-            displayImg.style.animation = 'none';
-            displayImg.offsetHeight; /* Trigger Reflow */
-            displayImg.style.animation = 'floatIn 0.6s ease-out';
-
-            // 2. Update Table (Dynamic Rows)
-            specsBody.innerHTML = ''; // Clear old data
+            // Update Image Area
+            mainImg.src = data.image;
+            mainTitle.innerText = data.model;
             
-            for (const [key, value] of Object.entries(data.specs)) {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <th>${key}</th>
-                    <td>${value}</td>
-                `;
-                specsBody.appendChild(row);
+            // Animation Reset
+            mainImg.style.opacity = 0;
+            mainImg.style.transform = "translateY(10px)";
+            setTimeout(() => {
+                mainImg.style.opacity = 1;
+                mainImg.style.transform = "translateY(0)";
+            }, 50);
+
+            // Update Table
+            specsTable.innerHTML = ''; // Clear existing
+            
+            for (const [category, details] of Object.entries(data.specs)) {
+                // Create Category Header
+                const catHeader = document.createElement('tr');
+                catHeader.innerHTML = `<th colspan="2">${category}</th>`;
+                specsTable.appendChild(catHeader);
+
+                // Create Detail Rows
+                for (const [key, value] of Object.entries(details)) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="label-cell">${key}</td>
+                        <td class="value-cell">${value}</td>
+                    `;
+                    specsTable.appendChild(row);
+                }
             }
         }
 
-        // Initialize with Latest Phone
-        const lastIndex = phones.length - 1;
-        loadPhone(lastIndex, sidebar.children[lastIndex + 1]); // +1 to skip title
+        // Initialize First Phone (iPhone 17 Pro Max for demo)
+        loadPhone(0, sidebar.children[1]);
 
     </script>
 </body>
