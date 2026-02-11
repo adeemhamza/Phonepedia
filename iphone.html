@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iPhone Interactive Showcase</title>
+    <title>iPhone 17 Pro Showcase</title>
     <style>
         /* --- CORE STYLES --- */
         :root {
@@ -36,20 +36,16 @@
 
         .nav-logo { font-weight: 600; font-size: 1.3rem; }
 
-        /* --- HEADER & TABS --- */
+        /* --- HERO --- */
         .hero {
             text-align: center;
             padding: 80px 20px 40px;
         }
 
-        h1 {
-            font-size: 3rem;
-            margin: 0 0 10px;
-            letter-spacing: -1px;
-        }
+        h1 { font-size: 3.5rem; margin: 0 0 10px; letter-spacing: -1.5px; }
+        .subtitle { color: #86868b; font-size: 1.5rem; margin-bottom: 40px; }
 
-        .subtitle { color: #86868b; font-size: 1.2rem; margin-bottom: 40px; }
-
+        /* --- TABS --- */
         .tabs-wrapper {
             display: flex;
             justify-content: center;
@@ -61,14 +57,13 @@
             padding: 4px;
             border-radius: 99px;
             display: inline-flex;
-            position: relative;
         }
 
         .tab-btn {
             background: transparent;
             border: none;
-            padding: 8px 25px;
-            font-size: 0.95rem;
+            padding: 10px 28px;
+            font-size: 1rem;
             border-radius: 99px;
             cursor: pointer;
             font-weight: 500;
@@ -82,7 +77,7 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        /* --- PHONE GRID --- */
+        /* --- GRID --- */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -94,18 +89,20 @@
 
         .card {
             background: var(--card-bg);
-            border-radius: 20px;
+            border-radius: 24px;
             padding: 40px;
             text-align: center;
             transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
             cursor: pointer;
             opacity: 0;
             animation: fadeUp 0.6s forwards;
+            position: relative;
+            overflow: hidden;
         }
 
         .card:hover {
-            transform: scale(1.03);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
         }
 
         @keyframes fadeUp {
@@ -115,15 +112,14 @@
 
         .card-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 5px; }
         .card-desc { color: #86868b; margin-bottom: 30px; }
-        .card-img { font-size: 5rem; margin: 20px 0; display: block; }
+        .card-emoji { font-size: 5rem; margin: 20px 0; display: block; }
         .link { color: var(--blue); font-size: 0.9rem; text-decoration: none; }
-        .link:hover { text-decoration: underline; }
 
-        /* --- 3D MODAL --- */
+        /* --- MODAL --- */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(20px);
             z-index: 1000;
             opacity: 0;
@@ -139,13 +135,13 @@
         .modal-content {
             background: #fff;
             width: 90%;
-            max-width: 900px;
-            height: 70vh;
+            max-width: 1000px;
+            height: 80vh;
             border-radius: 24px;
             box-shadow: 0 30px 80px rgba(0,0,0,0.2);
             display: flex;
             overflow: hidden;
-            transform: scale(0.9);
+            transform: scale(0.95);
             transition: transform 0.4s var(--ease);
             position: relative;
         }
@@ -157,39 +153,56 @@
             top: 20px; right: 20px;
             background: #f0f0f0;
             border: none;
-            width: 32px; height: 32px;
+            width: 36px; height: 36px;
             border-radius: 50%;
             cursor: pointer;
             font-size: 1.2rem;
-            z-index: 10;
+            z-index: 20;
+            color: #555;
         }
 
-        /* Modal Layout */
+        /* Modal Structure */
         .modal-left {
-            flex: 1;
-            background: #fbfbfd;
+            flex: 1.5;
+            background: #f5f5f7;
             display: flex;
             align-items: center;
             justify-content: center;
-            perspective: 1200px;
+            position: relative;
+            perspective: 1000px;
         }
 
         .modal-right {
             flex: 1;
-            padding: 50px;
+            padding: 60px;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            border-left: 1px solid #f0f0f0;
         }
 
-        /* --- PURE CSS 3D IPHONE --- */
+        /* --- SKETCHFAB IFRAME --- */
+        .sketchfab-embed-wrapper {
+            width: 100%;
+            height: 100%;
+            display: none; /* Hidden by default */
+        }
+        
+        .sketchfab-embed-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* --- CSS FALLBACK PHONE (For other models) --- */
         .phone-3d {
-            width: 160px;
-            height: 320px;
+            width: 170px;
+            height: 340px;
             position: relative;
             transform-style: preserve-3d;
             animation: spin 10s infinite linear;
-            --phone-color: #333; /* Default, changed by JS */
+            display: block;
+            --phone-color: #333;
         }
 
         @keyframes spin {
@@ -197,87 +210,55 @@
             100% { transform: rotateX(10deg) rotateY(360deg); }
         }
 
-        .side { position: absolute; border: 1px solid rgba(0,0,0,0.1); }
-        
+        .side { position: absolute; border: 1px solid rgba(0,0,0,0.05); }
         .front {
-            width: 160px; height: 320px;
-            background: #000;
-            transform: translateZ(10px);
-            border-radius: 24px;
-            overflow: hidden;
+            width: 170px; height: 340px; background: #000;
+            transform: translateZ(10px); border-radius: 24px;
             box-shadow: inset 0 0 15px rgba(255,255,255,0.1);
+            overflow: hidden;
+            display: flex; justify-content: center;
         }
-
-        .screen-notch {
-            background: #111;
-            width: 40%; height: 18px;
-            margin: 5px auto;
-            border-radius: 20px;
-        }
-
-        .screen-ui {
-            height: 100%; width: 100%;
-            background: linear-gradient(160deg, #222, #000);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 2rem;
-            opacity: 0.5;
-        }
-
+        .notch { width: 35%; height: 20px; background: #111; border-radius: 0 0 12px 12px; }
         .back {
-            width: 160px; height: 320px;
-            background: var(--phone-color); /* Dynamic Color */
-            transform: translateZ(-10px) rotateY(180deg);
-            border-radius: 24px;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.15);
+            width: 170px; height: 340px; background: var(--phone-color);
+            transform: translateZ(-10px) rotateY(180deg); border-radius: 24px;
         }
+        .left { width: 20px; height: 340px; background: #555; transform: rotateY(-90deg) translateZ(10px); }
+        .right { width: 20px; height: 340px; background: #555; transform: rotateY(90deg) translateZ(160px); }
+        .top { width: 170px; height: 20px; background: #555; transform: rotateX(90deg) translateZ(10px); }
+        .bottom { width: 170px; height: 20px; background: #555; transform: rotateX(-90deg) translateZ(330px); }
 
-        .camera-bump {
-            position: absolute; top: 15px; left: 15px;
-            width: 60px; height: 60px;
-            background: rgba(0,0,0,0.15);
-            border-radius: 18px;
+        /* Hardware Spec Styling */
+        .spec-row {
+            display: flex; align-items: center; margin-bottom: 30px;
+            border-bottom: 1px solid #eee; padding-bottom: 15px;
         }
+        .spec-icon { font-size: 2rem; margin-right: 20px; width: 40px; text-align: center; }
+        .spec-detail h4 { margin: 0; font-size: 1.1rem; }
+        .spec-detail p { margin: 5px 0 0; color: #666; font-size: 0.9rem; }
 
-        .left { width: 20px; height: 320px; background: #555; transform: rotateY(-90deg) translateZ(10px); }
-        .right { width: 20px; height: 320px; background: #555; transform: rotateY(90deg) translateZ(150px); }
-        .top { width: 160px; height: 20px; background: #555; transform: rotateX(90deg) translateZ(10px); }
-        .bottom { width: 160px; height: 20px; background: #555; transform: rotateX(-90deg) translateZ(310px); }
-
-        /* Hardware Details */
-        .spec-item {
-            margin-bottom: 25px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 15px;
-        }
-        .spec-label { font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
-        .spec-val { font-size: 1.4rem; font-weight: 600; color: #111; }
-
-        /* Responsive */
-        @media(max-width: 768px) {
-            .modal-content { flex-direction: column; height: 90vh; }
-            .modal-left { height: 40%; }
-            .modal-right { padding: 30px; }
+        @media(max-width: 800px) {
+            .modal-content { flex-direction: column; height: 100%; width: 100%; border-radius: 0; }
+            .modal-left { height: 45%; }
+            .modal-right { padding: 30px; height: 55%; overflow-y: auto; }
         }
     </style>
 </head>
 <body>
 
     <nav>
-        <div class="nav-logo"> Apple Store</div>
+        <div class="nav-logo"> Apple Event</div>
     </nav>
 
     <div class="hero">
-        <h1 id="hero-title">iPhone 16 Pro</h1>
-        <div class="subtitle">The ultimate iPhone.</div>
+        <h1 id="hero-title">Hello, Future.</h1>
+        <div class="subtitle">Designed to be loved.</div>
 
         <div class="tabs-wrapper">
             <div class="segmented-control">
-                <button class="tab-btn active" onclick="switchTab('pro')">Pro Models</button>
-                <button class="tab-btn" onclick="switchTab('base')">Regular</button>
-                <button class="tab-btn" onclick="switchTab('se')">Budget</button>
+                <button class="tab-btn active" onclick="switchTab('pro')">iPhone 17 Pro</button>
+                <button class="tab-btn" onclick="switchTab('base')">iPhone 17</button>
+                <button class="tab-btn" onclick="switchTab('se')">iPhone SE</button>
             </div>
         </div>
     </div>
@@ -289,14 +270,13 @@
             <button class="close-btn" onclick="closeModal()">×</button>
             
             <div class="modal-left">
-                <div class="phone-3d" id="phone3d">
-                    <div class="side front">
-                        <div class="screen-notch"></div>
-                        <div class="screen-ui"></div>
-                    </div>
-                    <div class="side back">
-                        <div class="camera-bump"></div>
-                    </div>
+                <div class="sketchfab-embed-wrapper" id="real-3d-wrapper">
+                    <iframe id="sketchfab-iframe" title="iPhone 17 Pro Max" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src=""> </iframe>
+                </div>
+
+                <div class="phone-3d" id="css-phone">
+                    <div class="side front"><div class="notch"></div></div>
+                    <div class="side back"></div>
                     <div class="side left"></div>
                     <div class="side right"></div>
                     <div class="side top"></div>
@@ -305,103 +285,138 @@
             </div>
 
             <div class="modal-right">
-                <h2 id="m-title" style="font-size: 2.5rem; margin-top: 0;">iPhone 16 Pro</h2>
+                <h2 id="m-title" style="font-size: 2.5rem; margin-top: 0; margin-bottom: 5px;">Model Name</h2>
+                <p id="m-desc" style="color: #888; margin-bottom: 40px; font-size: 1.2rem;">Tagline goes here.</p>
                 
-                <div class="spec-item">
-                    <div class="spec-label">Processor</div>
-                    <div class="spec-val" id="m-chip">A18 Pro</div>
+                <div class="spec-row">
+                    <div class="spec-icon">⚡️</div>
+                    <div class="spec-detail">
+                        <h4 id="m-chip">Processor</h4>
+                        <p>Industry leading speed.</p>
+                    </div>
                 </div>
-                <div class="spec-item">
-                    <div class="spec-label">Camera</div>
-                    <div class="spec-val" id="m-cam">48MP Fusion</div>
+                <div class="spec-row">
+                    <div class="spec-icon">📷</div>
+                    <div class="spec-detail">
+                        <h4 id="m-cam">Camera</h4>
+                        <p>Capture the moment.</p>
+                    </div>
                 </div>
-                <div class="spec-item">
-                    <div class="spec-label">Material</div>
-                    <div class="spec-val" id="m-body">Titanium Design</div>
+                <div class="spec-row">
+                    <div class="spec-icon">🔋</div>
+                    <div class="spec-detail">
+                        <h4 id="m-batt">Battery</h4>
+                        <p>All-day battery life.</p>
+                    </div>
                 </div>
                 
-                <a href="#" class="link" style="font-size: 1.1rem; margin-top: 10px;">Buy Now ></a>
+                <a href="#" class="link" style="font-size: 1.1rem; margin-top: 20px;">Buy Now ></a>
             </div>
         </div>
     </div>
 
     <script>
-        // --- 1. DATA DATABASE ---
+        // --- DATA ---
+        // Added 'embedUrl' specifically for 17 Pro Max
         const phones = {
             pro: [
-                { id: 1, name: "iPhone 16 Pro Max", chip: "A18 Pro Chip", cam: "Triple 48MP System", body: "Grade 5 Titanium", color: "#a59e96", desc: "Our largest display ever." },
-                { id: 2, name: "iPhone 16 Pro", chip: "A18 Pro Chip", cam: "Triple 48MP System", body: "Grade 5 Titanium", color: "#3d424b", desc: "The ultimate iPhone." }
+                { 
+                    id: '17promax', 
+                    name: "iPhone 17 Pro Max", 
+                    tag: "The ultimate iPhone.", 
+                    chip: "A19 Pro Chip", 
+                    cam: "Triple 48MP Fusion", 
+                    batt: "33h Playback",
+                    // The Sketchfab Embed URL provided
+                    embedUrl: "https://sketchfab.com/models/87fc1df741384124a8ce0226d2b2058d/embed?autostart=1&ui_controls=1&ui_infos=0&ui_inspector=0&ui_stop=0&ui_watermark=0&ui_watermark_link=0" 
+                },
+                { 
+                    id: '17pro', 
+                    name: "iPhone 17 Pro", 
+                    tag: "So strong. So light.", 
+                    chip: "A19 Pro Chip", 
+                    cam: "Triple 48MP System", 
+                    batt: "29h Playback",
+                    color: "#4e5363" // Titanium Blue CSS color
+                }
             ],
             base: [
-                { id: 3, name: "iPhone 16", chip: "A18 Chip", cam: "Advanced Dual Camera", body: "Aerospace Aluminum", color: "#8fb5d6", desc: "Total powerhouse." },
-                { id: 4, name: "iPhone 15", chip: "A16 Bionic", cam: "48MP Main Camera", body: "Aluminum Design", color: "#e3ff8f", desc: "New camera. New design." }
+                { id: '17plus', name: "iPhone 17 Plus", tag: "Huge impact.", chip: "A18 Chip", cam: "Advanced Dual Camera", batt: "26h Playback", color: "#f2f2f2" },
+                { id: '17base', name: "iPhone 17", tag: "New camera. New design.", chip: "A18 Chip", cam: "Advanced Dual Camera", batt: "20h Playback", color: "#ff9f9f" }
             ],
             se: [
-                { id: 5, name: "iPhone SE", chip: "A15 Bionic", cam: "Single Wide Camera", body: "Glass & Aluminum", color: "#bf2a2a", desc: "Love the power. Love the price." }
+                { id: 'se', name: "iPhone SE", tag: "Love the power. Love the price.", chip: "A16 Bionic", cam: "Single Wide Camera", batt: "15h Playback", color: "#333" }
             ]
         };
 
         const grid = document.getElementById('grid');
         const modal = document.getElementById('modal');
-        const phone3d = document.getElementById('phone3d');
+        const iframeWrapper = document.getElementById('real-3d-wrapper');
+        const iframe = document.getElementById('sketchfab-iframe');
+        const cssPhone = document.getElementById('css-phone');
 
-        // --- 2. RENDER FUNCTIONS ---
-        function switchTab(category) {
-            // Update Tab UI
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        // --- RENDER GRID ---
+        function switchTab(cat) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
 
-            // Render Grid
-            grid.innerHTML = ''; // Clear existing
-            
-            phones[category].forEach(phone => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.onclick = () => openModal(phone);
-                card.innerHTML = `
-                    <div class="card-title">${phone.name}</div>
-                    <div class="card-desc">${phone.desc}</div>
-                    <div class="card-img">📱</div>
-                    <div class="link">Learn more ></div>
+            grid.innerHTML = '';
+            phones[cat].forEach(p => {
+                const el = document.createElement('div');
+                el.className = 'card';
+                el.onclick = () => openModal(p);
+                el.innerHTML = `
+                    <div class="card-title">${p.name}</div>
+                    <div class="card-desc">${p.tag}</div>
+                    <div class="card-emoji">📱</div>
+                    <div class="link">View Details ></div>
                 `;
-                grid.appendChild(card);
+                grid.appendChild(el);
             });
         }
 
-        // --- 3. INTERACTIVE MODAL ---
-        function openModal(phoneData) {
-            // Inject Data
-            document.getElementById('m-title').innerText = phoneData.name;
-            document.getElementById('m-chip').innerText = phoneData.chip;
-            document.getElementById('m-cam').innerText = phoneData.cam;
-            document.getElementById('m-body').innerText = phoneData.body;
+        // --- OPEN MODAL ---
+        function openModal(data) {
+            // Fill Text Data
+            document.getElementById('m-title').innerText = data.name;
+            document.getElementById('m-desc').innerText = data.tag;
+            document.getElementById('m-chip').innerText = data.chip;
+            document.getElementById('m-cam').innerText = data.cam;
+            document.getElementById('m-batt').innerText = data.batt;
 
-            // Change 3D Phone Color Dynamically
-            phone3d.style.setProperty('--phone-color', phoneData.color);
+            // TOGGLE BETWEEN SKETCHFAB AND CSS PHONE
+            if (data.embedUrl) {
+                // Show Real 3D
+                cssPhone.style.display = 'none';
+                iframeWrapper.style.display = 'block';
+                iframe.src = data.embedUrl; // Load URL only when needed
+            } else {
+                // Show CSS Fallback
+                iframeWrapper.style.display = 'none';
+                iframe.src = ""; // Unload iframe to save memory
+                cssPhone.style.display = 'block';
+                
+                // Update CSS Phone Color
+                cssPhone.style.setProperty('--phone-color', data.color || '#333');
+            }
 
-            // Reset Animation (To make it spin from start)
-            phone3d.style.animation = 'none';
-            phone3d.offsetHeight; /* trigger reflow */
-            phone3d.style.animation = 'spin 12s infinite linear';
-
-            // Show Modal
             modal.classList.add('open');
         }
 
         function closeModal() {
             modal.classList.remove('open');
+            // Clear iframe src to stop audio/video when closed
+            setTimeout(() => {
+                iframe.src = "";
+            }, 500);
         }
 
-        // Close when clicking outside content
         modal.addEventListener('click', (e) => {
             if(e.target === modal) closeModal();
         });
 
-        // Initialize with Pro models
-        window.onload = () => {
-            // Manually trigger click on first tab to load data
-            document.querySelector('.tab-btn').click();
-        };
+        // Initialize
+        document.querySelector('.tab-btn').click();
     </script>
 </body>
 </html>
