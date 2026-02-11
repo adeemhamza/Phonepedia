@@ -3,209 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iPhone 15 Pro | Professional 3D Anatomy</title>
-    
+    <title>iPhone 3D Anatomy Fix</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"></script>
-
     <style>
-        :root { --accent: #007aff; --bg: #000; --panel: rgba(15, 15, 15, 0.9); }
-        body, html { margin: 0; padding: 0; height: 100%; background: var(--bg); color: white; font-family: 'SF Pro Display', -apple-system, sans-serif; overflow: hidden; }
-
-        #main-layout { display: flex; height: 100vh; }
-        
-        /* Sidebar Design */
-        #sidebar {
-            width: 320px; background: #050505; border-right: 1px solid #222;
-            padding: 40px 25px; z-index: 10; display: flex; flex-direction: column;
-            box-shadow: 10px 0 30px rgba(0,0,0,0.8);
-        }
-
-        h1 { font-size: 26px; margin: 0 0 10px 0; font-weight: 700; color: #fff; }
-        .subtitle { color: #666; font-size: 14px; margin-bottom: 40px; }
-
-        .model-card {
-            background: #111; border: 1px solid #222; padding: 20px;
-            border-radius: 15px; cursor: pointer; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-bottom: 15px;
-        }
-        .model-card:hover { border-color: var(--accent); background: #161618; transform: scale(1.02); }
-        .model-card.active { border-color: var(--accent); background: rgba(0, 122, 255, 0.1); }
-
-        /* Floating Info Panel */
-        #info-box {
-            position: absolute; bottom: 40px; right: 40px; width: 350px;
-            background: var(--panel); backdrop-filter: blur(25px);
-            padding: 30px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1);
-            display: none; box-shadow: 0 30px 60px rgba(0,0,0,0.6);
-            animation: popUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes popUp { from { opacity: 0; transform: translateY(30px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
-
-        #info-box h2 { margin: 0 0 15px 0; color: var(--accent); font-size: 22px; }
-        #info-box p { font-size: 15px; line-height: 1.7; color: #bbb; margin: 0; }
-
-        #canvas-box { flex-grow: 1; position: relative; outline: none; }
-        .guide { position: absolute; top: 20px; left: 20px; color: #444; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; }
+        body { margin: 0; background: #000; color: white; font-family: sans-serif; overflow: hidden; display: flex; }
+        #sidebar { width: 250px; height: 100vh; background: #111; padding: 20px; border-right: 1px solid #333; z-index: 10; }
+        #canvas-container { flex-grow: 1; height: 100vh; position: relative; }
+        #info-panel { position: absolute; bottom: 20px; right: 20px; width: 250px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 15px; border-radius: 10px; display: none; }
     </style>
 </head>
 <body>
 
-<div id="main-layout">
-    <div id="sidebar">
-        <h1>iPhone Lab</h1>
-        <p class="subtitle">Interactive Anatomy Explorer</p>
-        
-        <div class="model-card active">
-            <strong>iPhone 15 Pro Max</strong>
-            <div style="font-size: 12px; color: #555; margin-top: 5px;">A17 Bionic • Titanium Build</div>
-        </div>
-        
-        <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid #222;">
-            <p style="font-size: 12px; color: #444;">Click a part to explode & inspect. <br> Rotate with mouse.</p>
-        </div>
-    </div>
+<div id="sidebar">
+    <h2>iPhone Parts</h2>
+    <p style="font-size: 12px; color: #888;">1. Click phone to Explode<br>2. Click parts for Info</p>
+    <hr>
+    <div id="status" style="color: #007aff;">Engine Ready ✅</div>
+</div>
 
-    <div id="canvas-box">
-        <div class="guide">Real-time 3D Engine Active</div>
-        <div id="info-box">
-            <h2 id="title">Part</h2>
-            <p id="desc">Description goes here.</p>
-        </div>
+<div id="canvas-container">
+    <div id="info-panel">
+        <h3 id="p-name" style="margin:0; color:#007aff;">Part</h3>
+        <p id="p-desc" style="font-size:13px;"></p>
     </div>
 </div>
 
 <script>
-    let scene, camera, renderer, controls, phone;
-    let exploded = false;
+    let scene, camera, renderer, controls, group;
+    let isExploded = false;
 
-    // Detailed Parts Data
-    const database = {
-        "OLED Display": "Super Retina XDR OLED panel with 120Hz ProMotion. It's the primary interface between user and hardware.",
-        "FaceID Array": "Contains the Dot Projector and Infrared Camera for secure facial authentication.",
-        "A17 Bionic Chip": "The brain of the iPhone. 3nm architecture with 6-core GPU for console-level gaming performance.",
-        "Main Battery": "Lithium-ion cells configured in an L-shape for maximum energy density and capacity.",
-        "Triple Camera System": "48MP Main, Ultra Wide, and Telephoto lenses with LiDAR for depth mapping.",
-        "Taptic Engine": "Advanced linear actuator providing haptic feedback that mimics physical textures.",
-        "Motherboard": "The central PCB connecting the CPU, RAM, and Storage modules in a compact stacked design.",
-        "USB-C Port": "High-speed data transfer and charging port, replacing the traditional Lightning connector."
+    const details = {
+        "Screen": "Super Retina XDR OLED Display.",
+        "Battery": "High-capacity Li-ion Power Cell.",
+        "LogicBoard": "A17 Bionic Motherboard Layer.",
+        "Camera": "Triple Lens Optical System."
     };
 
     function init() {
         scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x020202);
+        scene.background = new THREE.Color(0x0a0a0a);
 
-        camera = new THREE.PerspectiveCamera(45, (window.innerWidth - 320) / window.innerHeight, 0.1, 1000);
-        camera.position.set(5, 2, 8);
+        camera = new THREE.PerspectiveCamera(50, (window.innerWidth - 250) / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 0, 10); // Camera door rakha hai taake sab dikhay
 
-        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(window.innerWidth - 320, window.innerHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
-        document.getElementById('canvas-box').appendChild(renderer.domElement);
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth - 250, window.innerHeight);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-        // Lights
-        const ambient = new THREE.AmbientLight(0xffffff, 0.3);
-        scene.add(ambient);
-        
-        const spot = new THREE.SpotLight(0xffffff, 1);
-        spot.position.set(10, 20, 10);
-        scene.add(spot);
+        // Lights (Very Important)
+        const light1 = new THREE.DirectionalLight(0xffffff, 1.5);
+        light1.position.set(5, 5, 5);
+        scene.add(light1);
+
+        const light2 = new THREE.AmbientLight(0xffffff, 0.8);
+        scene.add(light2);
 
         controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
+        
+        group = new THREE.Group();
+        scene.add(group);
 
-        phone = new THREE.Group();
-        scene.add(phone);
-
-        buildInternalParts();
-        render();
-    }
-
-    function buildInternalParts() {
+        // Creating Parts
         const parts = [
-            { name: "OLED Display", color: 0x0a0a0a, size: [2.5, 5, 0.05], z: 0.6 },
-            { name: "FaceID Array", color: 0x222222, size: [1, 0.2, 0.1], z: 0.5, y: 2.2 },
-            { name: "Motherboard", color: 0x0a3d1d, size: [1, 2.5, 0.1], z: 0.2, x: 0.6 },
-            { name: "A17 Bionic Chip", color: 0x333333, size: [0.6, 0.6, 0.12], z: 0.3, x: 0.6, y: 0.5 },
-            { name: "Main Battery", color: 0x151515, size: [1.2, 3.8, 0.2], z: 0, x: -0.5 },
-            { name: "Triple Camera System", color: 0x222222, size: [1, 1, 0.3], z: -0.4, x: 0.6, y: 1.8 },
-            { name: "Taptic Engine", color: 0x555555, size: [0.8, 0.4, 0.15], z: -0.2, y: -2 },
-            { name: "USB-C Port", color: 0x888888, size: [0.4, 0.1, 0.2], z: 0, y: -2.45 }
+            { name: "Screen", color: 0x333333, h: 5, w: 2.5, d: 0.1, z: 0.5 },
+            { name: "LogicBoard", color: 0x00ff44, h: 3, w: 1, d: 0.1, z: 0 },
+            { name: "Battery", color: 0x222222, h: 4, w: 1.5, d: 0.2, z: -0.5 },
+            { name: "Camera", color: 0xffffff, h: 1, w: 1, d: 0.3, z: -0.8 }
         ];
 
         parts.forEach(p => {
-            const geo = new THREE.BoxGeometry(...p.size);
-            const mat = new THREE.MeshStandardMaterial({ 
-                color: p.color, 
-                metalness: 0.8, 
-                roughness: 0.1,
-                emissive: 0x000000 
-            });
-            const mesh = new THREE.Mesh(geo, mat);
+            const geometry = new THREE.BoxGeometry(p.w, p.h, p.d);
+            const material = new THREE.MeshStandardMaterial({ color: p.color, metalness: 0.5, roughness: 0.2 });
+            const mesh = new THREE.Mesh(geometry, material);
             mesh.name = p.name;
-            mesh.position.set(p.x || 0, p.y || 0, 0); // Start at 0 on Z
-            phone.add(mesh);
+            group.add(mesh);
         });
+
+        animate();
     }
 
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
-    window.addEventListener('click', (e) => {
-        if(e.clientX < 320) return;
-
-        mouse.x = ((e.clientX - 320) / (window.innerWidth - 320)) * 2 - 1;
+    window.addEventListener('mousedown', (e) => {
+        if(e.clientX < 250) return;
+        mouse.x = ((e.clientX - 250) / (window.innerWidth - 250)) * 2 - 1;
         mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
 
         raycaster.setFromCamera(mouse, camera);
-        const hits = raycaster.intersectObjects(phone.children);
+        const hits = raycaster.intersectObjects(group.children);
 
         if (hits.length > 0) {
-            const selected = hits[0].object;
-            
-            if (!exploded) {
-                // Professional Explode Transition
-                phone.children.forEach((child, i) => {
-                    gsap.to(child.position, {
-                        z: i * 1.4 - 4, 
-                        duration: 1.8, 
-                        ease: "power4.out"
-                    });
+            if (!isExploded) {
+                group.children.forEach((m, i) => {
+                    gsap.to(m.position, { z: i * 1.5, duration: 1 });
                 });
-                exploded = true;
+                isExploded = true;
             } else {
-                // Show Info & Highlight
-                const box = document.getElementById('info-box');
-                box.style.display = 'block';
-                document.getElementById('title').innerText = selected.name;
-                document.getElementById('desc').innerText = database[selected.name];
-                
-                // Reset colors and highlight selected
-                phone.children.forEach(c => c.material.emissive.setHex(0x000000));
-                selected.material.emissive.setHex(0x002244);
+                const p = hits[0].object;
+                document.getElementById('info-panel').style.display = 'block';
+                document.getElementById('p-name').innerText = p.name;
+                document.getElementById('p-desc').innerText = details[p.name];
             }
         } else {
-            // Collapse if clicked empty space
-            if(exploded) {
-                phone.children.forEach(c => gsap.to(c.position, { z: 0, duration: 1.2, ease: "expo.inOut" }));
-                exploded = false;
-                document.getElementById('info-box').style.display = 'none';
+            if(isExploded) {
+                group.children.forEach(m => gsap.to(m.position, { z: 0, duration: 1 }));
+                isExploded = false;
+                document.getElementById('info-panel').style.display = 'none';
             }
         }
     });
 
-    function render() {
-        requestAnimationFrame(render);
-        controls.update();
+    function animate() {
+        requestAnimationFrame(animate);
+        group.rotation.y += 0.005; // Model rotate hoga taake nazar aaye
         renderer.render(scene, camera);
     }
-
-    window.addEventListener('resize', () => {
-        camera.aspect = (window.innerWidth - 320) / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth - 320, window.innerHeight);
-    });
 
     init();
 </script>
