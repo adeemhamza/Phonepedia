@@ -2,378 +2,462 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iPhone Ultimate Specs Sheet</title>
+    <title>G-Square Drift: Pakistan Edition</title>
     <style>
-        /* --- Apple Aesthetic Theme --- */
-        :root {
-            --bg-color: #f5f5f7;
-            --sidebar-bg: #ffffff;
-            --text-main: #1d1d1f;
-            --text-light: #86868b;
-            --accent: #0071e3;
-            --border: #d2d2d7;
-            --header-bg: #fbfbfd;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            margin: 0;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* --- Sidebar --- */
-        .sidebar {
-            width: 280px;
-            background: var(--sidebar-bg);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            flex-shrink: 0;
-        }
-
-        .sidebar-header {
-            padding: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-light);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            position: sticky;
-            top: 0;
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(5px);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .nav-item {
-            padding: 14px 20px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-main);
-            border-bottom: 1px solid #f0f0f0;
-            transition: background 0.2s;
-        }
-
-        .nav-item:hover { background-color: #f5f5f7; }
-
-        .nav-item.active {
-            background-color: #0071e3;
-            color: #fff;
-        }
-
-        /* --- Main Content (Split View) --- */
-        .main-content {
-            flex: 1;
-            display: flex;
-            background: #fff;
-            overflow: hidden;
-        }
-
-        /* Left: Phone Image */
-        .image-section {
-            width: 40%;
-            background-color: #fafafa;
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-        }
-
-        .phone-img {
-            max-height: 60vh;
-            max-width: 100%;
-            object-fit: contain;
-            filter: drop-shadow(0 15px 35px rgba(0,0,0,0.2));
-            transition: transform 0.3s ease;
-        }
+        body { margin: 0; overflow: hidden; background: #000; font-family: 'Courier New', Courier, monospace; }
         
-        .phone-name-display {
-            margin-top: 30px;
-            font-size: 32px;
-            font-weight: 700;
-            text-align: center;
+        /* UI Overlay */
+        #hud {
+            position: absolute;
+            top: 20px; left: 20px;
+            color: #00ffcc;
+            text-shadow: 0 0 10px #00ffcc;
+            pointer-events: none;
+            z-index: 10;
         }
-
-        /* Right: Detailed Table */
-        .details-section {
-            width: 60%;
-            overflow-y: auto;
-            padding: 0;
+        h1 { margin: 0; font-style: italic; text-transform: uppercase; letter-spacing: 2px; }
+        .controls { background: rgba(0, 0, 0, 0.6); padding: 10px; border-left: 4px solid #00ffcc; margin-top: 10px; }
+        
+        /* Speedometer */
+        #dashboard {
+            position: absolute;
+            bottom: 20px; right: 20px;
+            text-align: right;
+            color: white;
+            z-index: 10;
         }
-
-        .specs-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px; /* Slightly smaller for dense data */
+        #speed { font-size: 60px; font-weight: bold; color: #fff; }
+        #unit { font-size: 20px; color: #888; }
+        #rpm-bar {
+            width: 200px; height: 10px; background: #333;
+            margin-top: 5px; border-radius: 5px; overflow: hidden;
         }
+        #rpm-fill { width: 0%; height: 100%; background: linear-gradient(90deg, yellow, red); transition: width 0.1s; }
 
-        .specs-table th {
-            text-align: left;
-            padding: 12px 20px;
-            background-color: #f5f5f7;
-            color: var(--text-main);
-            font-weight: 700;
-            text-transform: uppercase;
-            border-top: 1px solid #e0e0e0;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .specs-table td {
-            padding: 12px 20px;
-            color: #333;
-            line-height: 1.6;
-            vertical-align: top;
-        }
-
-        .category-row {
-            background-color: #fbfbfd;
-        }
-
-        .label-cell {
-            width: 30%;
-            font-weight: 600;
-            color: var(--text-light);
-            border-right: 1px solid #f0f0f0;
-        }
-
-        .value-cell {
-            width: 70%;
-        }
-
-        /* Responsive */
-        @media (max-width: 900px) {
-            .sidebar { display: none; }
-            .main-content { flex-direction: column; overflow-y: auto; }
-            .image-section { width: 100%; height: 400px; border-right: none; border-bottom: 1px solid var(--border); }
-            .details-section { width: 100%; }
+        /* Loading Screen */
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; color: white; display: flex; 
+            justify-content: center; align-items: center; z-index: 999;
         }
     </style>
+    
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+                "cannon-es": "https://unpkg.com/cannon-es@0.20.0/dist/cannon-es.js"
+            }
+        }
+    </script>
 </head>
 <body>
 
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">Select Model</div>
-        </div>
+<div id="loader"><h1>LOADING G-SQUARE ENGINE...</h1></div>
 
-    <div class="main-content">
-        
-        <div class="image-section">
-            <img id="main-img" src="" alt="iPhone" class="phone-img">
-            <div id="main-title" class="phone-name-display">iPhone</div>
-        </div>
-
-        <div class="details-section">
-            <table class="specs-table" id="specs-table">
-                </table>
-        </div>
+<div id="hud">
+    <h1>G-SQUARE DRIFT</h1>
+    <div class="controls">
+        <p><b>WASD / Arrows:</b> Drive</p>
+        <p><b>SPACE:</b> Handbrake (Drift)</p>
+        <p><b>SHIFT:</b> Nitro Boost</p>
+        <p><b>R:</b> Reset Car</p>
+        <p><b>V:</b> Change Camera</p>
     </div>
+</div>
 
-    <script>
-        // --- DATA STORE ---
-        // Maine yahan iPhone 2G, iPhone X, aur iPhone 17 Pro Max (Aapka Data) add kiya hai.
-        // Aap isi format mein baqi phones copy-paste kar saktay hain.
+<div id="dashboard">
+    <div><span id="speed">0</span> <span id="unit">KM/H</span></div>
+    <div id="rpm-bar"><div id="rpm-fill"></div></div>
+</div>
+
+<script type="module">
+    import * as THREE from 'three';
+    import * as CANNON from 'cannon-es';
+
+    // --- CONFIGURATION ---
+    const CAR_COLOR = 0xffffff; // White Mehran
+    const NEON_COLOR = 0x00ff00; // Green Underglow
+    
+    // --- SCENE SETUP ---
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x050505);
+    scene.fog = new THREE.FogExp2(0x050505, 0.015);
+
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 500);
+    
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    document.body.appendChild(renderer.domElement);
+
+    // --- PHYSICS WORLD ---
+    const world = new CANNON.World();
+    world.gravity.set(0, -9.82, 0);
+    world.broadphase = new CANNON.SAPBroadphase(world);
+    
+    // Physics Materials
+    const groundMat = new CANNON.Material();
+    const wheelMat = new CANNON.Material();
+    const wheelGroundContact = new CANNON.ContactMaterial(wheelMat, groundMat, {
+        friction: 0.3, // Low friction for drift
+        restitution: 0,
+        contactEquationStiffness: 1000
+    });
+    world.addContactMaterial(wheelGroundContact);
+
+    // --- CITY GENERATION (G-Square Style) ---
+    function createCity() {
+        // 1. The Floor (Asphalt)
+        const groundGeo = new THREE.PlaneGeometry(500, 500);
+        const groundMeshMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.6 });
+        const groundMesh = new THREE.Mesh(groundGeo, groundMeshMat);
+        groundMesh.rotation.x = -Math.PI / 2;
+        groundMesh.receiveShadow = true;
+        scene.add(groundMesh);
+
+        // Physics Floor
+        const groundBody = new CANNON.Body({ mass: 0, material: groundMat }); // Static
+        groundBody.addShape(new CANNON.Plane());
+        groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
+        world.addBody(groundBody);
+
+        // 2. Buildings & Street Lights
+        const buildingGeo = new THREE.BoxGeometry(1, 1, 1);
+        const buildingMat = new THREE.MeshPhongMaterial({ color: 0x222222 });
+        const windowMat = new THREE.MeshBasicMaterial({ color: 0xffffaa }); // Lit windows
+
+        for (let i = 0; i < 60; i++) {
+            // Random buildings avoiding the center (Road area)
+            let x = (Math.random() - 0.5) * 400;
+            let z = (Math.random() - 0.5) * 400;
+            
+            if (Math.abs(x) < 20 && Math.abs(z) < 20) continue; // Clear spawn area
+
+            let h = 10 + Math.random() * 40;
+            let w = 10 + Math.random() * 15;
+            let d = 10 + Math.random() * 15;
+
+            const building = new THREE.Mesh(buildingGeo, buildingMat);
+            building.position.set(x, h/2, z);
+            building.scale.set(w, h, d);
+            building.castShadow = true;
+            building.receiveShadow = true;
+            scene.add(building);
+
+            // Add collision for buildings
+            const shape = new CANNON.Box(new CANNON.Vec3(w/2, h/2, d/2));
+            const body = new CANNON.Body({ mass: 0 });
+            body.position.set(x, h/2, z);
+            body.addShape(shape);
+            world.addBody(body);
+        }
+
+        // 3. Street Lights
+        const lightGeo = new THREE.CylinderGeometry(0.2, 0.2, 8);
+        const lightMat = new THREE.MeshBasicMaterial({ color: 0x555555 });
         
-        const phonesData = [
-            {
-                id: "iphone17promax",
-                model: "iPhone 17 Pro Max (Concept)",
-                image: "https://via.placeholder.com/400x700/000000/FFFFFF?text=iPhone+17+Pro+Max",
-                specs: {
-                    "Network": {
-                        "Technology": "GSM / CDMA / HSPA / EVDO / LTE / 5G",
-                        "Speed": "HSPA, LTE-A, 5G, EV-DO Rev.A 3.1 Mbps"
-                    },
-                    "Launch": {
-                        "Announced": "2025, September 09",
-                        "Status": "Available. Released 2025, September 19"
-                    },
-                    "Body": {
-                        "Dimensions": "163.4 x 78 x 8.8 mm (6.43 x 3.07 x 0.35 in)",
-                        "Weight": "233 g (8.22 oz)",
-                        "Build": "Glass front (Ceramic Shield 2), aluminum alloy frame, glass back",
-                        "SIM": "Nano-SIM + eSIM + eSIM (Intl) / Dual eSIM (USA)",
-                        "Protection": "IP68 dust/water resistant (up to 6m for 30 min)"
-                    },
-                    "Display": {
-                        "Type": "LTPO Super Retina XDR OLED, 120Hz, HDR10, Dolby Vision",
-                        "Size": "6.9 inches, 115.6 cm2 (~90.7% screen-to-body ratio)",
-                        "Resolution": "1320 x 2868 pixels, 19.5:9 ratio (~460 ppi density)",
-                        "Protection": "Ceramic Shield 2, Mohs level 5 Anti-reflective coating",
-                        "Brightness": "1000 nits (typ), 3000 nits (peak)"
-                    },
-                    "Platform": {
-                        "OS": "iOS 26, upgradable to iOS 26.2.1",
-                        "Chipset": "Apple A19 Pro (3 nm)",
-                        "CPU": "Hexa-core (2x4.26 GHz + 4x Efficiency)",
-                        "GPU": "Apple GPU (6-core graphics)"
-                    },
-                    "Memory": {
-                        "Card slot": "No",
-                        "Internal": "256GB 12GB RAM, 512GB 12GB RAM, 1TB 12GB RAM, 2TB 12GB RAM NVMe"
-                    },
-                    "Main Camera": {
-                        "Triple Setup": "48 MP (wide) + 48 MP (periscope telephoto) + 48 MP (ultrawide)",
-                        "Features": "Dual-LED dual-tone flash, HDR (photo/panorama)",
-                        "Video": "4K@120fps, 1080p@240fps, 10-bit HDR, Dolby Vision, ProRes, 3D Spatial"
-                    },
-                    "Selfie Camera": {
-                        "Single": "18 MP multi-aspect, f/1.9, 20mm (ultrawide)",
-                        "Features": "HDR, Dolby Vision HDR, 3D (spatial) audio",
-                        "Video": "4K@60fps, 1080p@120fps, gyro-EIS"
-                    },
-                    "Sound": {
-                        "Loudspeaker": "Yes, with stereo speakers",
-                        "3.5mm jack": "No"
-                    },
-                    "Comms": {
-                        "WLAN": "Wi-Fi 802.11 a/b/g/n/ac/6e/7, tri-band, hotspot",
-                        "Bluetooth": "6.0, A2DP, LE",
-                        "Positioning": "GPS (L1+L5), GLONASS, GALILEO, BDS, QZSS, NavIC",
-                        "NFC": "Yes",
-                        "USB": "USB Type-C 3.2 Gen 2, DisplayPort"
-                    },
-                    "Features": {
-                        "Sensors": "Face ID, accelerometer, gyro, proximity, compass, barometer, UWB (gen2)",
-                        "Emergency": "Emergency SOS, Messages and Find My via satellite"
-                    },
-                    "Battery": {
-                        "Type": "Li-Ion 5088 mAh, non-removable",
-                        "Charging": "Wired PD3.2 (50% in 20 min), 25W MagSafe, 4.5W Reverse Wired"
-                    },
-                    "Misc": {
-                        "Colors": "Silver, Cosmic Orange, Deep Blue",
-                        "Price": "$1,350.00 / €1,265.00"
-                    },
-                    "Tests": {
-                        "Performance": "AnTuTu: 2600583 (v10)",
-                        "Loudspeaker": "-26.2 LUFS (Good)",
-                        "Battery Life": "Active use score 17:58h"
-                    }
-                }
-            },
-            {
-                id: "iphone1",
-                model: "iPhone (Original 2G)",
-                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/IPhone_2G_PSD_Mock.png/430px-IPhone_2G_PSD_Mock.png",
-                specs: {
-                    "Network": { "Technology": "GSM", "Speed": "GPRS, EDGE" },
-                    "Launch": { "Announced": "2007, January 09", "Status": "Discontinued" },
-                    "Body": { "Dimensions": "115 x 61 x 11.6 mm", "Weight": "135 g", "Build": "Aluminum back, plastic bottom", "SIM": "Mini-SIM" },
-                    "Display": { "Type": "TFT LCD", "Size": "3.5 inches", "Resolution": "320 x 480 pixels", "Protection": "Corning Gorilla Glass" },
-                    "Platform": { "OS": "iOS 1.0, upgradable to iOS 3.1.3", "Chipset": "Samsung RISC ARM 412 MHz", "GPU": "PowerVR MBX" },
-                    "Memory": { "Card slot": "No", "Internal": "4GB / 8GB / 16GB, 128MB RAM" },
-                    "Main Camera": { "Single": "2 MP", "Video": "No" },
-                    "Selfie Camera": { "Single": "No" },
-                    "Sound": { "Loudspeaker": "Yes", "3.5mm jack": "Yes" },
-                    "Comms": { "WLAN": "Wi-Fi 802.11b/g", "Bluetooth": "2.0 (Headset only)", "GPS": "No", "USB": "2.0 (30-pin)" },
-                    "Battery": { "Type": "Li-Ion 1400 mAh", "Charging": "Standard" }
-                }
-            },
-            {
-                id: "iphonex",
-                model: "iPhone X",
-                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/IPhone_X_vector.svg/400px-IPhone_X_vector.svg.png",
-                specs: {
-                    "Network": { "Technology": "GSM / HSPA / LTE", "Speed": "HSPA 42.2/5.76 Mbps, LTE-A (3CA) Cat12" },
-                    "Launch": { "Announced": "2017, September 12", "Status": "Discontinued" },
-                    "Body": { "Dimensions": "143.6 x 70.9 x 7.7 mm", "Weight": "174 g", "Build": "Glass front/back, stainless steel frame" },
-                    "Display": { "Type": "Super Retina OLED, HDR10", "Size": "5.8 inches", "Resolution": "1125 x 2436 pixels" },
-                    "Platform": { "OS": "iOS 11.1.1, upgradable to iOS 16", "Chipset": "Apple A11 Bionic (10 nm)" },
-                    "Memory": { "Internal": "64GB / 256GB, 3GB RAM NVMe" },
-                    "Main Camera": { "Dual": "12 MP (wide) + 12 MP (telephoto)", "Features": "Quad-LED flash, HDR", "Video": "4K@24/30/60fps" },
-                    "Selfie Camera": { "Single": "7 MP, f/2.2", "Features": "Face ID" },
-                    "Comms": { "WLAN": "Wi-Fi 802.11 a/b/g/n/ac", "Bluetooth": "5.0", "NFC": "Yes", "USB": "Lightning, USB 2.0" },
-                    "Battery": { "Type": "Li-Ion 2716 mAh", "Charging": "15W wired, Qi wireless" }
-                }
-            },
-             {
-                id: "iphone15promax",
-                model: "iPhone 15 Pro Max",
-                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/IPhone_15_Pro_Blue_Titanium_mock.png/440px-IPhone_15_Pro_Blue_Titanium_mock.png",
-                specs: {
-                    "Network": { "Technology": "GSM / CDMA / HSPA / EVDO / LTE / 5G" },
-                    "Launch": { "Announced": "2023, September 12" },
-                    "Body": { "Dimensions": "159.9 x 76.7 x 8.3 mm", "Weight": "221 g", "Build": "Titanium frame" },
-                    "Display": { "Type": "LTPO Super Retina XDR OLED, 120Hz", "Size": "6.7 inches" },
-                    "Platform": { "OS": "iOS 17", "Chipset": "Apple A17 Pro (3 nm)" },
-                    "Memory": { "Internal": "256GB / 512GB / 1TB, 8GB RAM" },
-                    "Main Camera": { "Triple": "48 MP + 12 MP (Periscope 5x) + 12 MP (Ultrawide)", "Video": "4K@60fps, ProRes" },
-                    "Selfie Camera": { "Single": "12 MP, f/1.9" },
-                    "Comms": { "USB": "USB Type-C 3.0" },
-                    "Battery": { "Type": "Li-Ion 4441 mAh", "Charging": "Wired, 15W MagSafe" }
-                }
-            }
-        ];
+        for(let x = -100; x <= 100; x+=40) {
+             // Simple poles
+             const pole = new THREE.Mesh(lightGeo, lightMat);
+             pole.position.set(x, 4, 25);
+             scene.add(pole);
 
-        // --- RENDER LOGIC ---
+             const spotLight = new THREE.SpotLight(0xffaa00, 100);
+             spotLight.position.set(x, 8, 25);
+             spotLight.angle = Math.PI / 4;
+             spotLight.penumbra = 0.5;
+             spotLight.target.position.set(x, 0, 25);
+             scene.add(spotLight);
+             scene.add(spotLight.target);
+        }
+    }
+    createCity();
 
-        const sidebar = document.getElementById('sidebar');
-        const specsTable = document.getElementById('specs-table');
-        const mainImg = document.getElementById('main-img');
-        const mainTitle = document.getElementById('main-title');
+    // --- CAR SETUP (Procedural "Mehran") ---
+    function createCar() {
+        const chassisShape = new CANNON.Box(new CANNON.Vec3(1, 0.5, 1.8));
+        const chassisBody = new CANNON.Body({ mass: 150 });
+        chassisBody.addShape(chassisShape, new CANNON.Vec3(0, 0, 0)); // Main body
+        chassisBody.position.set(0, 2, 0);
+        chassisBody.angularDamping = 0.5;
 
-        // 1. Create Sidebar
-        phonesData.forEach((phone, index) => {
-            const btn = document.createElement('div');
-            btn.className = 'nav-item';
-            btn.innerText = phone.model;
-            btn.onclick = () => loadPhone(index, btn);
-            sidebar.appendChild(btn);
+        // Visual Car Group
+        const carMesh = new THREE.Group();
+
+        // Body (Lower)
+        const bodyGeo = new THREE.BoxGeometry(2, 0.8, 3.8);
+        const bodyMat = new THREE.MeshStandardMaterial({ color: CAR_COLOR, metalness: 0.3, roughness: 0.2 });
+        const bodyMesh = new THREE.Mesh(bodyGeo, bodyMat);
+        bodyMesh.position.y = -0.1;
+        carMesh.add(bodyMesh);
+
+        // Cabin (Upper - Hatchback Style)
+        const cabinGeo = new THREE.BoxGeometry(1.9, 0.7, 2.2);
+        const cabinMesh = new THREE.Mesh(cabinGeo, bodyMat);
+        cabinMesh.position.set(0, 0.65, -0.2);
+        carMesh.add(cabinMesh);
+
+        // Windshield (Black)
+        const glassGeo = new THREE.BoxGeometry(1.92, 0.6, 1.5);
+        const glassMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.0 });
+        const glassMesh = new THREE.Mesh(glassGeo, glassMat);
+        glassMesh.position.set(0, 0.65, -0.1);
+        carMesh.add(glassMesh);
+
+        // Headlights
+        const lightGeo = new THREE.BoxGeometry(0.4, 0.2, 0.1);
+        const headLightMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 2 });
+        
+        const hlL = new THREE.Mesh(lightGeo, headLightMat);
+        hlL.position.set(0.6, 0, 1.91);
+        carMesh.add(hlL);
+
+        const hlR = new THREE.Mesh(lightGeo, headLightMat);
+        hlR.position.set(-0.6, 0, 1.91);
+        carMesh.add(hlR);
+
+        // Real Spotlights for night driving
+        const carLight = new THREE.SpotLight(0xffffff, 50);
+        carLight.position.set(0, 1, 1);
+        carLight.target.position.set(0, 0, 10);
+        carLight.angle = 0.5;
+        carLight.penumbra = 0.3;
+        carLight.castShadow = true;
+        carMesh.add(carLight);
+        carMesh.add(carLight.target); // Important to add target to hierarchy
+
+        // Tail lights
+        const tailLightMat = new THREE.MeshStandardMaterial({ color: 0xff0000, emissive: 0xff0000, emissiveIntensity: 2 });
+        const tlL = new THREE.Mesh(lightGeo, tailLightMat);
+        tlL.position.set(0.6, 0, -1.91);
+        carMesh.add(tlL);
+        const tlR = new THREE.Mesh(lightGeo, tailLightMat);
+        tlR.position.set(-0.6, 0, -1.91);
+        carMesh.add(tlR);
+
+        scene.add(carMesh);
+
+        // Vehicle Physics Setup
+        const vehicle = new CANNON.RaycastVehicle({
+            chassisBody: chassisBody,
+            indexRightAxis: 0,
+            indexUpAxis: 1,
+            indexForwardAxis: 2
         });
 
-        // 2. Load Data Function
-        function loadPhone(index, clickedBtn) {
-            // Update Active State
-            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-            if(clickedBtn) clickedBtn.classList.add('active');
-            else sidebar.children[1].classList.add('active'); // Default first item
+        const wheelOptions = {
+            radius: 0.35,
+            directionLocal: new CANNON.Vec3(0, -1, 0),
+            suspensionStiffness: 35,
+            suspensionRestLength: 0.3,
+            frictionSlip: 1.2, // Drift factor
+            dampingRelaxation: 2.3,
+            dampingCompression: 4.4,
+            maxSuspensionForce: 100000,
+            rollInfluence: 0.01,
+            axleLocal: new CANNON.Vec3(1, 0, 0),
+            chassisConnectionPointLocal: new CANNON.Vec3(1, 1, 0),
+            maxSuspensionTravel: 0.3,
+            customSlidingRotationalSpeed: -30,
+            useCustomSlidingRotationalSpeed: true
+        };
 
-            const data = phonesData[index];
+        // Add Wheels
+        const axleWidth = 0.8;
+        const wheelY = -0.5;
+        const frontZ = 1.2;
+        const backZ = -1.2;
 
-            // Update Image Area
-            mainImg.src = data.image;
-            mainTitle.innerText = data.model;
+        vehicle.addWheel({ ...wheelOptions, chassisConnectionPointLocal: new CANNON.Vec3(axleWidth, wheelY, frontZ) });
+        vehicle.addWheel({ ...wheelOptions, chassisConnectionPointLocal: new CANNON.Vec3(-axleWidth, wheelY, frontZ) });
+        vehicle.addWheel({ ...wheelOptions, chassisConnectionPointLocal: new CANNON.Vec3(axleWidth, wheelY, backZ) });
+        vehicle.addWheel({ ...wheelOptions, chassisConnectionPointLocal: new CANNON.Vec3(-axleWidth, wheelY, backZ) });
+
+        vehicle.addToWorld(world);
+
+        // Visual Wheels
+        const wheelMeshes = [];
+        const wGeo = new THREE.CylinderGeometry(0.35, 0.35, 0.25, 24);
+        const wMat = new THREE.MeshStandardMaterial({ color: 0x333333 });
+        const rimGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.26, 8);
+        const rimMat = new THREE.MeshStandardMaterial({ color: 0xcccccc });
+
+        for (let i = 0; i < 4; i++) {
+            const wMesh = new THREE.Group();
+            const tire = new THREE.Mesh(wGeo, wMat);
+            tire.rotation.z = Math.PI / 2;
+            const rim = new THREE.Mesh(rimGeo, rimMat);
+            rim.rotation.z = Math.PI / 2;
+            wMesh.add(tire);
+            wMesh.add(rim);
             
-            // Animation Reset
-            mainImg.style.opacity = 0;
-            mainImg.style.transform = "translateY(10px)";
-            setTimeout(() => {
-                mainImg.style.opacity = 1;
-                mainImg.style.transform = "translateY(0)";
-            }, 50);
+            scene.add(wMesh);
+            wheelMeshes.push(wMesh);
+        }
 
-            // Update Table
-            specsTable.innerHTML = ''; // Clear existing
-            
-            for (const [category, details] of Object.entries(data.specs)) {
-                // Create Category Header
-                const catHeader = document.createElement('tr');
-                catHeader.innerHTML = `<th colspan="2">${category}</th>`;
-                specsTable.appendChild(catHeader);
+        return { vehicle, chassisBody, carMesh, wheelMeshes };
+    }
 
-                // Create Detail Rows
-                for (const [key, value] of Object.entries(details)) {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td class="label-cell">${key}</td>
-                        <td class="value-cell">${value}</td>
-                    `;
-                    specsTable.appendChild(row);
-                }
+    const { vehicle, chassisBody, carMesh, wheelMeshes } = createCar();
+
+    // --- PARTICLE SYSTEM (SMOKE) ---
+    const particles = [];
+    const smokeGeo = new THREE.PlaneGeometry(1, 1);
+    const smokeMat = new THREE.MeshBasicMaterial({ 
+        color: 0xaaaaaa, transparent: true, opacity: 0.5, depthWrite: false 
+    });
+
+    function createSmoke(pos) {
+        if(particles.length > 50) return; // Limit particles
+        const p = new THREE.Mesh(smokeGeo, smokeMat);
+        p.position.copy(pos);
+        p.position.y = 0.2;
+        p.rotation.z = Math.random() * Math.PI;
+        p.life = 1.0;
+        scene.add(p);
+        particles.push(p);
+    }
+
+    // --- INPUT HANDLING ---
+    const keys = { w: false, a: false, s: false, d: false, space: false, shift: false };
+
+    document.addEventListener('keydown', (e) => {
+        if(e.key === ' ' || e.code === 'Space') keys.space = true;
+        if(e.key === 'Shift') keys.shift = true;
+        if(e.key.toLowerCase() === 'r') resetCar();
+        if(e.key.toLowerCase() === 'v') toggleCamera();
+        keys[e.key.toLowerCase()] = true;
+    });
+    
+    document.addEventListener('keyup', (e) => {
+        if(e.key === ' ' || e.code === 'Space') keys.space = false;
+        if(e.key === 'Shift') keys.shift = false;
+        keys[e.key.toLowerCase()] = false;
+    });
+
+    function resetCar() {
+        chassisBody.position.set(0, 2, 0);
+        chassisBody.quaternion.set(0, 0, 0, 1);
+        chassisBody.velocity.set(0, 0, 0);
+        chassisBody.angularVelocity.set(0, 0, 0);
+    }
+
+    let camMode = 0; // 0: Chase, 1: Top, 2: Far
+    function toggleCamera() {
+        camMode = (camMode + 1) % 3;
+    }
+
+    // --- MAIN GAME LOOP ---
+    const timeStep = 1 / 60;
+    const speedometer = document.getElementById('speed');
+    const rpmFill = document.getElementById('rpm-fill');
+    document.getElementById('loader').style.display = 'none';
+
+    function animate() {
+        requestAnimationFrame(animate);
+
+        // 1. Physics Engine
+        const maxSteer = 0.6;
+        const engineForce = keys.shift ? 2500 : 1200; // Nitro boost
+        const brakeForce = 50;
+        const handBrakeForce = 1000;
+
+        // Drive Logic (Rear Wheel Drive)
+        let force = 0;
+        if (keys.w || keys.arrowup) force = -engineForce;
+        if (keys.s || keys.arrowdown) force = engineForce / 1.5;
+
+        vehicle.applyEngineForce(force, 2);
+        vehicle.applyEngineForce(force, 3);
+
+        // Steering
+        let steer = 0;
+        if (keys.a || keys.arrowleft) steer = maxSteer;
+        if (keys.d || keys.arrowright) steer = -maxSteer;
+        
+        vehicle.setSteeringValue(steer, 0);
+        vehicle.setSteeringValue(steer, 1);
+
+        // Brakes & Drift
+        if (keys.space) {
+            vehicle.setBrake(handBrakeForce, 2);
+            vehicle.setBrake(handBrakeForce, 3);
+            // Create smoke if moving fast
+            if(chassisBody.velocity.length() > 5) {
+                createSmoke(wheelMeshes[2].position);
+                createSmoke(wheelMeshes[3].position);
+            }
+        } else {
+            vehicle.setBrake(0, 2);
+            vehicle.setBrake(0, 3);
+        }
+
+        world.step(timeStep);
+
+        // 2. Sync Visuals
+        carMesh.position.copy(chassisBody.position);
+        carMesh.quaternion.copy(chassisBody.quaternion);
+        // Correct car body offset visually
+        carMesh.translateY(-0.5); 
+
+        for (let i = 0; i < vehicle.wheelInfos.length; i++) {
+            vehicle.updateWheelTransform(i);
+            const t = vehicle.wheelInfos[i].worldTransform;
+            wheelMeshes[i].position.copy(t.position);
+            wheelMeshes[i].quaternion.copy(t.quaternion);
+        }
+
+        // 3. Camera System
+        let offset;
+        if(camMode === 0) offset = new THREE.Vector3(0, 4, 8); // Chase
+        else if(camMode === 1) offset = new THREE.Vector3(0, 20, 10); // Top
+        else offset = new THREE.Vector3(0, 6, 15); // Far
+
+        // Convert local offset to world
+        const cameraTarget = offset.applyMatrix4(carMesh.matrixWorld);
+        camera.position.lerp(cameraTarget, 0.1); // Smooth follow
+        camera.lookAt(carMesh.position);
+
+        // 4. Update Particles
+        for(let i = particles.length - 1; i >= 0; i--){
+            let p = particles[i];
+            p.position.y += 0.05;
+            p.scale.x += 0.05;
+            p.scale.y += 0.05;
+            p.material.opacity -= 0.02;
+            if(p.material.opacity <= 0) {
+                scene.remove(p);
+                particles.splice(i, 1);
             }
         }
 
-        // Initialize First Phone (iPhone 17 Pro Max for demo)
-        loadPhone(0, sidebar.children[1]);
+        // 5. Dashboard Update
+        const speedKmH = Math.round(chassisBody.velocity.length() * 3.6);
+        speedometer.innerText = speedKmH;
+        
+        // Fake RPM logic
+        let rpm = (speedKmH / 150) * 100;
+        if(keys.w) rpm += 10;
+        if(rpm > 100) rpm = 100 + Math.random() * 5; // Needle wobble
+        rpmFill.style.width = rpm + '%';
+        if(rpm > 80) rpmFill.style.background = 'red';
+        else rpmFill.style.background = 'linear-gradient(90deg, yellow, red)';
 
-    </script>
+        renderer.render(scene, camera);
+    }
+
+    // Handle Resize
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    animate();
+</script>
+
 </body>
 </html>
