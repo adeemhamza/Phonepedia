@@ -2,44 +2,55 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Grand Theft Mehran: Vice City</title>
+    <title>PROJECT: REDLINE - Pro Drift</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
 
-        body { margin: 0; overflow: hidden; background: #000; font-family: 'Arial', sans-serif; }
-        
-        /* VICE CITY HUD STYLING */
-        #hud {
+        body { margin: 0; overflow: hidden; background: #000; font-family: 'Orbitron', sans-serif; }
+
+        /* CINEMATIC HUD */
+        #ui-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none;
-        }
-        
-        .logo {
-            position: absolute; top: 20px; right: 20px;
-            font-family: 'Permanent Marker', cursive;
-            font-size: 40px;
-            color: #ff69b4; /* Hot Pink */
-            text-shadow: 3px 3px 0px #00ffff; /* Cyan Shadow */
-            transform: rotate(-5deg);
+            background: radial-gradient(circle, transparent 60%, rgba(0,0,0,0.8) 100%); /* Vignette */
         }
 
-        .controls-info {
+        .hud-panel {
+            position: absolute; bottom: 30px; right: 40px;
+            text-align: right;
+            transform: skewX(-15deg);
+        }
+
+        #speed-val {
+            font-size: 100px; font-weight: 900; color: #fff;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+            line-height: 0.8;
+        }
+        #speed-unit { font-size: 20px; color: #00ffff; letter-spacing: 2px; }
+
+        .rpm-container {
+            width: 300px; height: 15px; background: #222;
+            margin-top: 10px; border: 2px solid #555;
+            display: flex;
+        }
+        .rpm-bar { height: 100%; width: 0%; transition: width 0.05s; }
+
+        /* CHECKPOINT TIMER */
+        .timer-box {
+            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+            text-align: center; color: white;
+        }
+        #timer { font-size: 40px; color: #ff0055; text-shadow: 0 0 10px #ff0055; }
+        #checkpoint-msg { 
+            font-size: 24px; color: #00ff00; opacity: 0; 
+            transition: opacity 0.5s; text-transform: uppercase;
+        }
+
+        /* INSTRUCTIONS */
+        .controls {
             position: absolute; top: 20px; left: 20px;
-            color: #fff; font-weight: bold; font-size: 14px;
-            background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 10px;
-            border-left: 5px solid #ff69b4;
+            color: rgba(255,255,255,0.5); font-size: 12px;
         }
-
-        /* Speedometer - Retro Style */
-        .dashboard {
-            position: absolute; bottom: 30px; right: 30px;
-            background: rgba(0,0,0,0.5);
-            padding: 10px 20px;
-            border-radius: 20px;
-            border: 2px solid #00ffff;
-        }
-        .speed { font-size: 60px; font-weight: 900; color: #ff69b4; text-shadow: 2px 2px #000; }
-        .unit { font-size: 20px; color: #00ffff; font-weight: bold; }
 
     </style>
     
@@ -55,231 +66,242 @@
 </head>
 <body>
 
-    <div id="hud">
-        <div class="logo">MEHRAN CITY</div>
-        <div class="controls-info">
-            W,A,S,D - Drive<br>
-            SPACE - Handbrake<br>
-            C - Change Camera
+    <div id="ui-layer">
+        <div class="controls">WASD: Drive | SPACE: Drift | C: Camera</div>
+        
+        <div class="timer-box">
+            <div id="timer">00:00:00</div>
+            <div id="checkpoint-msg">CHECKPOINT!</div>
         </div>
-        <div class="dashboard">
-            <span class="speed" id="speed-disp">0</span> <span class="unit">KM/H</span>
+
+        <div class="hud-panel">
+            <div><span id="speed-val">0</span> <span id="speed-unit">KMH</span></div>
+            <div class="rpm-container">
+                <div id="rpm-fill" class="rpm-bar" style="background: linear-gradient(90deg, #00ffff, #0000ff);"></div>
+            </div>
         </div>
     </div>
 
     <script type="module">
         import * as THREE from 'three';
+        import { Reflector } from 'three/addons/objects/Reflector.js'; // For mirrors if needed
         import * as CANNON from 'cannon-es';
 
-        // --- 1. SETUP & VICE CITY LIGHTING ---
+        // --- GRAPHICS SETTINGS ---
         const scene = new THREE.Scene();
-        // Sky Blue Background (Vice City Day)
-        scene.background = new THREE.Color(0x40a6ff); 
-        scene.fog = new THREE.Fog(0x40a6ff, 20, 150);
+        scene.background = new THREE.Color(0x101015);
+        scene.fog = new THREE.FogExp2(0x101015, 0.002);
 
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping; // Cinematic Colors
+        renderer.toneMappingExposure = 1.2;
         document.body.appendChild(renderer.domElement);
 
-        // SUNLIGHT
-        const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffaabb, 0.6);
-        scene.add(hemiLight);
-
-        const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
-        dirLight.position.set(50, 100, 50);
-        dirLight.castShadow = true;
-        dirLight.shadow.mapSize.width = 2048;
-        dirLight.shadow.mapSize.height = 2048;
-        scene.add(dirLight);
-
-        // PHYSICS
+        // --- PHYSICS WORLD ---
         const world = new CANNON.World();
         world.gravity.set(0, -9.82, 0);
-        
-        const groundMat = new CANNON.Material();
-        const wheelMat = new CANNON.Material();
-        const contactMat = new CANNON.ContactMaterial(wheelMat, groundMat, {
-            friction: 0.3, restitution: 0.1
+        world.broadphase = new CANNON.SAPBroadphase(world);
+
+        const defaultMaterial = new CANNON.Material('default');
+        const wheelMaterial = new CANNON.Material('wheel');
+        const wheelGroundContact = new CANNON.ContactMaterial(wheelMaterial, defaultMaterial, {
+            friction: 0.3, restitution: 0, contactEquationStiffness: 1000
         });
-        world.addContactMaterial(contactMat);
+        world.addContactMaterial(wheelGroundContact);
 
-        // --- 2. ENVIRONMENT (Miami Style) ---
-        
-        // The Ocean
-        const waterGeo = new THREE.PlaneGeometry(1000, 1000);
-        const waterMat = new THREE.MeshBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.8 });
-        const water = new THREE.Mesh(waterGeo, waterMat);
-        water.rotation.x = -Math.PI / 2;
-        water.position.y = -2; // Slightly below road
-        scene.add(water);
+        // --- TEXTURE GENERATOR (Procedural Assets) ---
+        function createAsphaltTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512; canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            
+            // Base Noise
+            ctx.fillStyle = '#222';
+            ctx.fillRect(0,0,512,512);
+            for(let i=0; i<50000; i++) {
+                ctx.fillStyle = Math.random() > 0.5 ? '#333' : '#111';
+                ctx.fillRect(Math.random()*512, Math.random()*512, 2, 2);
+            }
+            // Grid Lines
+            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for(let i=0; i<=512; i+=64) {
+                ctx.moveTo(i, 0); ctx.lineTo(i, 512);
+                ctx.moveTo(0, i); ctx.lineTo(512, i);
+            }
+            ctx.stroke();
 
-        // The Island (Sand/Grass)
-        const islandGeo = new THREE.PlaneGeometry(600, 600);
-        const islandMat = new THREE.MeshStandardMaterial({ color: 0x86c440 }); // Bright Grass
-        const island = new THREE.Mesh(islandGeo, islandMat);
-        island.rotation.x = -Math.PI / 2;
-        island.position.y = -0.1;
-        island.receiveShadow = true;
-        scene.add(island);
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.wrapS = THREE.RepeatWrapping;
+            tex.wrapT = THREE.RepeatWrapping;
+            tex.repeat.set(50, 50);
+            return tex;
+        }
 
-        // Physics Floor
-        const floorBody = new CANNON.Body({ mass: 0, material: groundMat });
+        // --- ENVIRONMENT ---
+        // 1. Lighting (Sunset Vibe)
+        const ambientLight = new THREE.AmbientLight(0x404040, 2);
+        scene.add(ambientLight);
+
+        const sunLight = new THREE.DirectionalLight(0xffaa33, 3);
+        sunLight.position.set(-50, 100, -50);
+        sunLight.castShadow = true;
+        sunLight.shadow.mapSize.width = 4096; // High Res Shadows
+        sunLight.shadow.mapSize.height = 4096;
+        sunLight.shadow.camera.near = 0.5;
+        sunLight.shadow.camera.far = 500;
+        sunLight.shadow.camera.left = -100;
+        sunLight.shadow.camera.right = 100;
+        sunLight.shadow.camera.top = 100;
+        sunLight.shadow.camera.bottom = -100;
+        scene.add(sunLight);
+
+        // 2. The Floor
+        const floorGeo = new THREE.PlaneGeometry(1000, 1000);
+        const floorMat = new THREE.MeshStandardMaterial({ 
+            map: createAsphaltTexture(),
+            roughness: 0.8,
+            metalness: 0.1
+        });
+        const floor = new THREE.Mesh(floorGeo, floorMat);
+        floor.rotation.x = -Math.PI / 2;
+        floor.receiveShadow = true;
+        scene.add(floor);
+
+        const floorBody = new CANNON.Body({ mass: 0, material: defaultMaterial });
         floorBody.addShape(new CANNON.Plane());
-        floorBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
+        floorBody.quaternion.setFromEuler(-Math.PI/2, 0, 0);
         world.addBody(floorBody);
 
-        // --- HELPER: CREATE PALM TREE ---
-        function createPalmTree(x, z) {
-            const group = new THREE.Group();
-            
-            // Trunk (Curved effect by stacking)
-            const trunkMat = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
-            const trunkGeo = new THREE.CylinderGeometry(0.4, 0.5, 2, 8);
-            
-            let currentY = 0;
-            for(let i=0; i<4; i++) {
-                const seg = new THREE.Mesh(trunkGeo, trunkMat);
-                seg.position.y = currentY;
-                seg.rotation.x = (Math.random() - 0.5) * 0.2; // Slight bend
-                group.add(seg);
-                currentY += 1.8;
-            }
+        // 3. Neon Checkpoints
+        const checkpoints = [];
+        function createCheckpoint(x, z, i) {
+            const geo = new THREE.TorusGeometry(8, 0.5, 16, 100);
+            const mat = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.position.set(x, 4, z);
+            mesh.lookAt(x + 10, 4, z + 10); // Random rotation logic could be better
+            scene.add(mesh);
+            checkpoints.push({ mesh, active: true, id: i, pos: new THREE.Vector3(x,0,z) });
 
-            // Leaves
-            const leafGeo = new THREE.ConeGeometry(2, 4, 4);
-            const leafMat = new THREE.MeshStandardMaterial({ color: 0x228b22 });
-            
-            for(let i=0; i<6; i++) {
-                const leaf = new THREE.Mesh(leafGeo, leafMat);
-                leaf.position.y = currentY;
-                leaf.rotation.x = 2; // Bend down
-                leaf.rotation.y = (i / 6) * Math.PI * 2;
-                group.add(leaf);
-            }
-
-            group.position.set(x, 1, z);
-            group.castShadow = true;
-            scene.add(group);
-
-            // Physics for tree (Simple Cylinder)
-            const shape = new CANNON.Cylinder(0.5, 0.5, 8, 8);
-            const body = new CANNON.Body({ mass: 0 });
-            body.addShape(shape, new CANNON.Vec3(0, 4, 0));
-            body.position.set(x, 0, z);
-            world.addBody(body);
+            // Light column
+            const light = new THREE.PointLight(0x00ff00, 5, 20);
+            light.position.set(x, 5, z);
+            scene.add(light);
         }
 
-        // --- BUILD WORLD ---
-        const bColors = [0xff69b4, 0x00ffff, 0xffff00, 0xffffff]; // Pink, Cyan, Yellow, White
-
-        for(let i=0; i<60; i++) {
-            const x = (Math.random() - 0.5) * 400;
-            const z = (Math.random() - 0.5) * 400;
-            
-            // Keep center road clear
-            if(Math.abs(x) < 20) continue; 
-
-            // 50% chance for Building, 50% for Palm Tree
-            if(Math.random() > 0.4) {
-                // Building
-                const h = 10 + Math.random() * 30;
-                const geo = new THREE.BoxGeometry(10, h, 10);
-                const color = bColors[Math.floor(Math.random() * bColors.length)];
-                const mat = new THREE.MeshStandardMaterial({ color: color });
-                const mesh = new THREE.Mesh(geo, mat);
-                mesh.position.set(x, h/2, z);
-                mesh.castShadow = true;
-                scene.add(mesh);
-
-                const shape = new CANNON.Box(new CANNON.Vec3(5, h/2, 5));
-                const body = new CANNON.Body({ mass: 0 });
-                body.addShape(shape);
-                body.position.set(x, h/2, z);
-                world.addBody(body);
-            } else {
-                // Palm Tree
-                createPalmTree(x, z);
-            }
+        // Generate circular track checkpoints
+        for(let i=0; i<10; i++) {
+            const angle = (i / 10) * Math.PI * 2;
+            const r = 150;
+            createCheckpoint(Math.cos(angle)*r, Math.sin(angle)*r, i);
         }
 
-        // --- 3. THE MEHRAN (Boxy Legend) ---
-        function createMehran() {
-            const chassisShape = new CANNON.Box(new CANNON.Vec3(1, 0.5, 1.8));
+        // --- THE PRO CAR (Detailed Geometry) ---
+        function createProCar() {
+            const chassisShape = new CANNON.Box(new CANNON.Vec3(1, 0.4, 2.0));
             const chassisBody = new CANNON.Body({ mass: 150 });
-            chassisBody.addShape(chassisShape, new CANNON.Vec3(0, 0, 0));
-            chassisBody.position.set(0, 3, 0);
+            chassisBody.addShape(chassisShape, new CANNON.Vec3(0, -0.2, 0));
+            chassisBody.position.set(150, 2, 0); // Start at first checkpoint roughly
             chassisBody.angularDamping = 0.5;
 
-            // VISUAL MESH
+            // Visuals
             const carGroup = new THREE.Group();
 
-            // White Paint Material
-            const paintMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 });
-            const blackMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8 });
+            // Car Paint Material (Shiny)
+            const paintMat = new THREE.MeshPhysicalMaterial({
+                color: 0xffffff, // White
+                metalness: 0.6,
+                roughness: 0.2,
+                clearcoat: 1.0,
+                clearcoatRoughness: 0.1
+            });
+            const glassMat = new THREE.MeshPhysicalMaterial({
+                color: 0x111111, metalness: 0.9, roughness: 0.0, transparent: true, opacity: 0.7
+            });
+            const carbonMat = new THREE.MeshStandardMaterial({
+                color: 0x111111, roughness: 0.8
+            });
 
-            // Main Body (Lower)
-            const bodyGeo = new THREE.BoxGeometry(1.9, 0.7, 3.8);
-            const bodyMesh = new THREE.Mesh(bodyGeo, paintMat);
-            bodyMesh.position.y = -0.1;
-            carGroup.add(bodyMesh);
+            // Main Hull
+            const hullGeo = new THREE.BoxGeometry(2.0, 0.6, 4.2);
+            const hull = new THREE.Mesh(hullGeo, paintMat);
+            hull.position.y = 0;
+            hull.castShadow = true;
+            carGroup.add(hull);
 
-            // Cabin (Boxy Top)
-            const roofGeo = new THREE.BoxGeometry(1.8, 0.7, 2.0); // Shorter for hatchback look
-            const roofMesh = new THREE.Mesh(roofGeo, paintMat);
-            roofMesh.position.set(0, 0.6, -0.3); // Shifted back
-            carGroup.add(roofMesh);
+            // Cabin
+            const cabinGeo = new THREE.BoxGeometry(1.8, 0.5, 2.2);
+            const cabin = new THREE.Mesh(cabinGeo, glassMat);
+            cabin.position.set(0, 0.6, -0.2);
+            carGroup.add(cabin);
 
-            // Bumpers (The Classic Black Mehran Bumpers)
-            const bumpGeo = new THREE.BoxGeometry(1.95, 0.3, 0.2);
-            const frontBump = new THREE.Mesh(bumpGeo, blackMat);
-            frontBump.position.set(0, -0.2, 1.95);
-            carGroup.add(frontBump);
+            // Spoiler
+            const spoilerLegs = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.5, 0.1), carbonMat);
+            spoilerLegs.position.set(0, 0.5, -1.8);
+            carGroup.add(spoilerLegs);
+            const spoilerWing = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.1, 0.6), carbonMat);
+            spoilerWing.position.set(0, 0.8, -1.9);
+            carGroup.add(spoilerWing);
 
-            const backBump = new THREE.Mesh(bumpGeo, blackMat);
-            backBump.position.set(0, -0.2, -1.95);
-            carGroup.add(backBump);
+            // Glowing Tail Lights (Neon Trail)
+            const tailGeo = new THREE.BoxGeometry(0.8, 0.2, 0.1);
+            const tailMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+            const tl = new THREE.Mesh(tailGeo, tailMat); tl.position.set(0.5, 0.1, -2.11);
+            const tr = new THREE.Mesh(tailGeo, tailMat); tr.position.set(-0.5, 0.1, -2.11);
+            carGroup.add(tl); carGroup.add(tr);
+
+            // Light Stream
+            const tailLightObj = new THREE.PointLight(0xff0000, 2, 10);
+            tailLightObj.position.set(0, 0.5, -2.5);
+            carGroup.add(tailLightObj);
 
             // Headlights
-            const lightGeo = new THREE.BoxGeometry(0.4, 0.2, 0.1);
-            const lightMat = new THREE.MeshStandardMaterial({ color: 0xffffaa, emissive: 0xffffaa });
-            const hlL = new THREE.Mesh(lightGeo, lightMat); hlL.position.set(0.6, 0, 1.95); carGroup.add(hlL);
-            const hlR = new THREE.Mesh(lightGeo, lightMat); hlR.position.set(-0.6, 0, 1.95); carGroup.add(hlR);
+            const headLightObj = new THREE.SpotLight(0xffffff, 100);
+            headLightObj.position.set(0, 0.5, 2.0);
+            headLightObj.target.position.set(0, 0, 10);
+            headLightObj.angle = 0.5;
+            headLightObj.penumbra = 0.5;
+            headLightObj.castShadow = true;
+            carGroup.add(headLightObj);
+            carGroup.add(headLightObj.target);
 
             scene.add(carGroup);
 
-            // VEHICLE SETUP
+            // Wheels
             const vehicle = new CANNON.RaycastVehicle({
                 chassisBody: chassisBody,
                 indexRightAxis: 0, indexUpAxis: 1, indexForwardAxis: 2
             });
 
-            const wheelOpts = {
+            const wheelOptions = {
                 radius: 0.35, directionLocal: new CANNON.Vec3(0, -1, 0),
-                suspensionStiffness: 45, suspensionRestLength: 0.3,
-                frictionSlip: 2.0, // Grippy tires for racing
-                dampingRelaxation: 2.3, dampingCompression: 4.4,
+                suspensionStiffness: 50, suspensionRestLength: 0.3,
+                frictionSlip: 2.5, dampingRelaxation: 2.3, dampingCompression: 4.4,
                 maxSuspensionForce: 100000, rollInfluence: 0.01,
                 axleLocal: new CANNON.Vec3(1, 0, 0),
                 chassisConnectionPointLocal: new CANNON.Vec3(1, 1, 0),
-                maxSuspensionTravel: 0.3,
+                maxSuspensionTravel: 0.2,
                 customSlidingRotationalSpeed: -30, useCustomSlidingRotationalSpeed: true
             };
 
-            vehicle.addWheel({ ...wheelOpts, chassisConnectionPointLocal: new CANNON.Vec3(0.8, -0.3, 1.2) });
-            vehicle.addWheel({ ...wheelOpts, chassisConnectionPointLocal: new CANNON.Vec3(-0.8, -0.3, 1.2) });
-            vehicle.addWheel({ ...wheelOpts, chassisConnectionPointLocal: new CANNON.Vec3(0.8, -0.3, -1.2) });
-            vehicle.addWheel({ ...wheelOpts, chassisConnectionPointLocal: new CANNON.Vec3(-0.8, -0.3, -1.2) });
+            vehicle.addWheel({ ...wheelOptions, chassisConnectionPointLocal: new CANNON.Vec3(0.9, -0.2, 1.4) });
+            vehicle.addWheel({ ...wheelOptions, chassisConnectionPointLocal: new CANNON.Vec3(-0.9, -0.2, 1.4) });
+            vehicle.addWheel({ ...wheelOptions, chassisConnectionPointLocal: new CANNON.Vec3(0.9, -0.2, -1.4) });
+            vehicle.addWheel({ ...wheelOptions, chassisConnectionPointLocal: new CANNON.Vec3(-0.9, -0.2, -1.4) });
 
             vehicle.addToWorld(world);
 
-            // Wheels Visuals
             const wheelMeshes = [];
-            const wGeo = new THREE.CylinderGeometry(0.35, 0.35, 0.3, 24);
-            const wMat = new THREE.MeshStandardMaterial({ color: 0x333333 });
-            const rimGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.32, 8); // Silver Rims
-            const rimMat = new THREE.MeshStandardMaterial({ color: 0xdddddd });
+            const wGeo = new THREE.CylinderGeometry(0.35, 0.35, 0.35, 32);
+            const wMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.5 });
+            const rimGeo = new THREE.CylinderGeometry(0.25, 0.25, 0.36, 16);
+            const rimMat = new THREE.MeshStandardMaterial({ color: 0xffaa00, metalness: 1.0, roughness: 0.2 });
 
             for(let i=0; i<4; i++){
                 const grp = new THREE.Group();
@@ -293,11 +315,12 @@
             return { vehicle, chassisBody, carGroup, wheelMeshes };
         }
 
-        const { vehicle, chassisBody, carGroup, wheelMeshes } = createMehran();
+        const { vehicle, chassisBody, carGroup, wheelMeshes } = createProCar();
 
-        // --- CONTROLS ---
+        // --- GAME LOGIC ---
         const keys = { w: false, a: false, s: false, d: false, space: false };
         let camMode = 0;
+        let startTime = Date.now();
 
         document.addEventListener('keydown', (e) => {
             if(e.code === 'Space') keys.space = true;
@@ -309,18 +332,20 @@
             keys[e.key.toLowerCase()] = false;
         });
 
-        // --- LOOP ---
+        // Loop
         function animate() {
             requestAnimationFrame(animate);
             world.step(1/60);
 
-            // PHYSICS
-            const engineForce = 1500;
-            const maxSteer = 0.5;
+            // Driving Physics
+            const speed = chassisBody.velocity.length();
+            const kmh = Math.round(speed * 3.6);
+            const engineForce = 2000;
+            const maxSteer = 0.5 - (speed * 0.01); // Dynamic steering (less steer at high speed)
 
             let force = 0;
             if(keys.w) force = -engineForce;
-            if(keys.s) force = engineForce / 2;
+            if(keys.s) force = engineForce;
             vehicle.applyEngineForce(force, 2);
             vehicle.applyEngineForce(force, 3);
 
@@ -331,17 +356,15 @@
             vehicle.setSteeringValue(steer, 1);
 
             if(keys.space) {
-                vehicle.setBrake(100, 2);
-                vehicle.setBrake(100, 3);
+                vehicle.setBrake(100, 2); vehicle.setBrake(100, 3);
             } else {
-                vehicle.setBrake(0, 2);
-                vehicle.setBrake(0, 3);
+                vehicle.setBrake(0, 2); vehicle.setBrake(0, 3);
             }
 
-            // VISUAL SYNC
+            // Visual Sync
             carGroup.position.copy(chassisBody.position);
             carGroup.quaternion.copy(chassisBody.quaternion);
-            carGroup.translateY(-0.55); // Adjust height visual
+            carGroup.translateY(-0.6); // Suspension offset
 
             for(let i=0; i<4; i++){
                 vehicle.updateWheelTransform(i);
@@ -349,16 +372,43 @@
                 wheelMeshes[i].quaternion.copy(vehicle.wheelInfos[i].worldTransform.quaternion);
             }
 
-            // CAMERA
-            // Mode 0: Chase, Mode 1: Top Down
-            const offset = camMode === 0 ? new THREE.Vector3(0, 4, 8) : new THREE.Vector3(0, 20, 5);
-            const camPos = offset.applyMatrix4(carGroup.matrixWorld);
-            camera.position.lerp(camPos, 0.1);
+            // Camera System (with Shake)
+            const shake = Math.random() * (speed * 0.002);
+            let camOffset = camMode === 0 ? new THREE.Vector3(0, 5, 10) : new THREE.Vector3(0, 2, 0.5);
+            let targetPos = camOffset.applyMatrix4(carGroup.matrixWorld);
+            
+            camera.position.lerp(targetPos, 0.1);
+            camera.position.x += shake;
+            camera.position.y += shake;
             camera.lookAt(carGroup.position);
 
-            // UPDATE HUD
-            const speed = Math.round(chassisBody.velocity.length() * 3.6);
-            document.getElementById('speed-disp').innerText = speed;
+            // Update UI
+            document.getElementById('speed-val').innerText = kmh;
+            const rpm = Math.min((kmh / 200) * 100, 100);
+            const rpmBar = document.getElementById('rpm-fill');
+            rpmBar.style.width = rpm + '%';
+            rpmBar.style.background = rpm > 90 ? 'red' : 'linear-gradient(90deg, #00ffff, #0000ff)';
+
+            // Timer
+            const elapsed = Date.now() - startTime;
+            const min = Math.floor(elapsed / 60000);
+            const sec = Math.floor((elapsed % 60000) / 1000);
+            const ms = Math.floor((elapsed % 1000) / 10);
+            document.getElementById('timer').innerText = `${min}:${sec}:${ms}`;
+
+            // Checkpoint Logic
+            checkpoints.forEach(cp => {
+                if(!cp.active) return;
+                const dist = carGroup.position.distanceTo(cp.pos);
+                if(dist < 10) {
+                    cp.active = false;
+                    cp.mesh.material.color.setHex(0x555555); // Turn off
+                    const msg = document.getElementById('checkpoint-msg');
+                    msg.style.opacity = 1;
+                    setTimeout(() => msg.style.opacity = 0, 1000);
+                }
+                cp.mesh.rotation.y += 0.02; // Animate ring
+            });
 
             renderer.render(scene, camera);
         }
