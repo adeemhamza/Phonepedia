@@ -3,177 +3,280 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DeDow | Unified Media Extractor</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Futuristic Editor - Glassmorphism</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        /* 2026 Futuristic Background & Typography */
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&display=swap');
-        
-        body {
-            font-family: 'Space Grotesk', sans-serif;
+        /* Base Reset & Background */
+        * {
             margin: 0;
-            min-height: 100vh;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        body {
+            /* Futuristic glowing background */
+            background: radial-gradient(circle at 15% 50%, #1a0b2e, #0f0c29, #24243e);
+            color: #fff;
+            height: 100vh;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            /* Deep neon gradient background */
-            background: linear-gradient(135deg, #050505 0%, #0a0f24 50%, #1a0b2e 100%);
-            background-size: 200% 200%;
-            animation: gradientShift 15s ease infinite;
+            flex-direction: column;
             overflow: hidden;
         }
 
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Ambient floating orbs */
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            z-index: 0;
-        }
-        .orb-1 { width: 300px; height: 300px; background: rgba(0, 242, 254, 0.3); top: 10%; left: 20%; }
-        .orb-2 { width: 400px; height: 400px; background: rgba(255, 42, 133, 0.2); bottom: 10%; right: 10%; }
-
-        /* The Core Glassmorphism Interface */
-        .glass-panel {
-            position: relative;
-            z-index: 10;
+        /* Glassmorphism Utility Class */
+        .glass {
             background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 32px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-        }
-
-        /* Neon Input Field */
-        .neon-input {
-            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Top Navbar */
+        .navbar {
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+            z-index: 10;
+        }
+
+        .navbar h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 20px;
+            color: #00e5ff;
+            text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+        }
+
+        .btn-export {
+            background: linear-gradient(45deg, #00e5ff, #0077ff);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
             color: white;
-            transition: all 0.3s ease;
-        }
-        .neon-input:focus {
-            outline: none;
-            border-color: #00f2fe;
-            box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
-            background: rgba(0, 0, 0, 0.6);
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
         }
 
-        /* Futuristic Button */
-        .btn-extract {
-            background: linear-gradient(90deg, #00f2fe 0%, #4facfe 100%);
-            color: #000;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
-        }
-        .btn-extract:hover {
+        .btn-export:hover {
+            box-shadow: 0 0 25px rgba(0, 229, 255, 0.8);
             transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(0, 242, 254, 0.6);
         }
 
-        /* Loading Animation */
-        .loader {
-            display: none;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top-color: #00f2fe;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
+        /* Main Workspace Layout */
+        .workspace {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 60px);
         }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Sidebar (Tools) */
+        .sidebar {
+            width: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            gap: 20px;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tool-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #a0a0ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 12px;
+            flex-direction: column;
+        }
+
+        .tool-btn:hover {
+            background: rgba(0, 229, 255, 0.1);
+            border-color: #00e5ff;
+            color: #00e5ff;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+        }
+
+        /* Canvas Area */
+        .canvas-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            position: relative;
+        }
+
+        /* The actual editing artboard */
+        .artboard {
+            width: 800px;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.8); /* White canvas for editing */
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+            transition: 0.3s;
+        }
+
+        /* Right Panel (Properties) */
+        .properties-panel {
+            width: 250px;
+            padding: 20px;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .properties-panel h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            margin-bottom: 15px;
+            color: #ff00ff;
+            text-shadow: 0 0 5px rgba(255, 0, 255, 0.4);
+        }
+
+        .prop-group {
+            margin-bottom: 15px;
+        }
+
+        .prop-group label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 5px;
+            color: #ccc;
+        }
+
+        .prop-group input[type="range"], .prop-group input[type="color"] {
+            width: 100%;
+            cursor: pointer;
+        }
+
+        /* Draggable Element inside Canvas */
+        .draggable-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #333;
+            font-size: 24px;
+            font-family: Arial, sans-serif;
+            cursor: grab;
+            user-select: none;
+            padding: 5px;
+            border: 1px dashed transparent;
+        }
+        
+        .draggable-text:active {
+            cursor: grabbing;
+        }
+
+        .draggable-text:hover {
+            border-color: #00e5ff;
+        }
     </style>
 </head>
 <body>
 
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
+    <header class="navbar glass">
+        <h1>NEON.CANVAS</h1>
+        <button class="btn-export">Export Design</button>
+    </header>
 
-    <div class="glass-panel w-full max-w-3xl mx-4 p-12 text-center">
-        <h1 class="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-500 tracking-tighter mb-2">
-            DeDow
-        </h1>
-        <p class="text-gray-400 text-sm tracking-[0.3em] uppercase mb-10">Universal Media Engine 2026</p>
+    <div class="workspace">
+        
+        <aside class="sidebar glass">
+            <div class="tool-btn" onclick="addText()">
+                <span style="font-size: 20px; font-weight: bold;">T</span>
+                Text
+            </div>
+            <div class="tool-btn">
+                <span style="font-size: 20px;">⬛</span>
+                Shape
+            </div>
+            <div class="tool-btn">
+                <span style="font-size: 20px;">🖼️</span>
+                Image
+            </div>
+            <div class="tool-btn">
+                <span style="font-size: 20px;">✨</span>
+                AI
+            </div>
+        </aside>
 
-        <div class="relative group max-w-2xl mx-auto">
-            <input type="text" id="urlInput" placeholder="Paste YouTube link or Image URL here..." 
-                   class="w-full py-5 pl-6 pr-40 rounded-2xl neon-input text-lg placeholder-gray-500">
+        <main class="canvas-container">
+            <div style="position: absolute; width: 300px; height: 300px; background: #00e5ff; filter: blur(150px); opacity: 0.2; top: 10%; left: 20%;"></div>
+            <div style="position: absolute; width: 300px; height: 300px; background: #ff00ff; filter: blur(150px); opacity: 0.2; bottom: 10%; right: 20%;"></div>
             
-            <button onclick="processDownload()" id="downloadBtn"
-                    class="absolute right-2 top-2 bottom-2 btn-extract px-8 rounded-xl font-bold text-sm tracking-wide flex items-center justify-center gap-2">
-                <span id="btnText">EXTRACT</span>
-                <div class="loader" id="spinner"></div>
-            </button>
-        </div>
+            <div class="artboard" id="artboard">
+                </div>
+        </main>
 
-        <div id="optionsPanel" class="mt-8 flex justify-center gap-4 opacity-50 pointer-events-none transition-opacity duration-300">
-            <label class="flex items-center gap-2 text-gray-300 cursor-pointer">
-                <input type="radio" name="format" value="video" checked class="accent-cyan-400">
-                High Quality Video
-            </label>
-            <label class="flex items-center gap-2 text-gray-300 cursor-pointer">
-                <input type="radio" name="format" value="audio" class="accent-cyan-400">
-                Audio Only
-            </label>
-            <label class="flex items-center gap-2 text-gray-300 cursor-pointer">
-                <input type="radio" name="format" value="image" class="accent-cyan-400">
-                HD Image Preview
-            </label>
-        </div>
-
-        <p id="statusMessage" class="mt-6 text-sm text-cyan-400 h-5"></p>
+        <aside class="properties-panel glass">
+            <h3>PROPERTIES</h3>
+            <div class="prop-group">
+                <label>Opacity</label>
+                <input type="range" min="0" max="100" value="100">
+            </div>
+            <div class="prop-group">
+                <label>Blur (Glass Effect)</label>
+                <input type="range" min="0" max="50" value="0">
+            </div>
+            <div class="prop-group">
+                <label>Color</label>
+                <input type="color" value="#00e5ff">
+            </div>
+        </aside>
     </div>
 
     <script>
-        // Simple UI Interaction Logic
-        const urlInput = document.getElementById('urlInput');
-        const optionsPanel = document.getElementById('optionsPanel');
+        const artboard = document.getElementById('artboard');
 
-        // Highlight options when user types
-        urlInput.addEventListener('input', () => {
-            if(urlInput.value.length > 5) {
-                optionsPanel.classList.remove('opacity-50', 'pointer-events-none');
-            } else {
-                optionsPanel.classList.add('opacity-50', 'pointer-events-none');
-            }
-        });
-
-        function processDownload() {
-            const url = urlInput.value;
-            if (!url) {
-                showStatus('Please enter a valid URL first.', 'text-red-400');
-                return;
-            }
-
-            // UI Loading State
-            const btnText = document.getElementById('btnText');
-            const spinner = document.getElementById('spinner');
+        // Function to add a new text element to the canvas
+        function addText() {
+            const textElement = document.createElement('div');
+            textElement.className = 'draggable-text';
+            textElement.innerText = 'Futuristic Text';
+            textElement.contentEditable = true; // Make it editable
             
-            btnText.style.display = 'none';
-            spinner.style.display = 'block';
-            showStatus('Establishing secure connection...', 'text-cyan-400');
+            // Basic Drag and Drop Logic
+            let isDragging = false;
+            let startX, startY, initialX, initialY;
 
-            // Simulated Backend Request (Since GitHub Pages is frontend only)
-            setTimeout(() => {
-                btnText.style.display = 'block';
-                spinner.style.display = 'none';
-                showStatus('Backend Server Required for Extraction. UI is ready!', 'text-yellow-400');
-                
-                // Note: To make this actually work, you would use fetch() here 
-                // to send the 'url' to your own Python/Node.js server API.
-            }, 2500);
-        }
+            textElement.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                initialX = textElement.offsetLeft;
+                initialY = textElement.offsetTop;
+                textElement.style.cursor = 'grabbing';
+            });
 
-        function showStatus(message, colorClass) {
-            const statusEl = document.getElementById('statusMessage');
-            statusEl.className = `mt-6 text-sm h-5 transition-colors ${colorClass}`;
-            statusEl.innerText = message;
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                textElement.style.left = `${initialX + dx}px`;
+                textElement.style.top = `${initialY + dy}px`;
+                textElement.style.transform = 'none'; // Remove center transform for dragging
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+                textElement.style.cursor = 'grab';
+            });
+
+            artboard.appendChild(textElement);
         }
     </script>
 </body>
