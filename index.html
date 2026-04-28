@@ -96,9 +96,80 @@
         .site-card:hover::before { opacity: 1; }
         .screen-count { font-size: 5.5rem; color: #cc0000; line-height: 1; margin-bottom: 10px; z-index: 2; text-shadow: 0 0 30px rgba(204,0,0,0.6); }
         .site-card p { color: #aaa; font-size: 1rem; z-index: 2; letter-spacing: 1px; font-weight: 300; }
-        .site-card h3 { font-size: 2rem; z-index: 2; color: #fff; line-height: 1.2; }
+        .site-card h3 { font-size: 2rem; z-index: 2; color: #fff; line-height: 1.2; text-align: center;}
+
+        /* --- Methodology Process Arc --- */
+        .process-container {
+            position: relative; width: 100%; max-width: 900px; height: 450px; margin: 60px auto 0;
+        }
+        .process-svg-wrapper {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;
+        }
+        .process-path {
+            fill: none; stroke: rgba(255,255,255,0.2); stroke-width: 2px;
+            stroke-dasharray: 2000; stroke-dashoffset: 2000;
+        }
+        .process-node {
+            position: absolute; width: 100px; height: 100px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            z-index: 2; box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            transform: translate(-50%, -50%) scale(0);
+        }
+        .process-node svg { width: 45px; height: 45px; fill: #000; }
         
-        .footer-space { height: 15vh; }
+        .node-1 { background: #8132e6; top: 90%; left: 10%; }
+        .node-2 { background: #ff9800; top: 40%; left: 26%; }
+        .node-3 { background: #ff2a5f; top: 15%; left: 50%; }
+        .node-4 { background: #1a41d6; top: 40%; left: 74%; }
+        .node-5 { background: #00c49a; top: 90%; left: 90%; }
+
+        .process-text {
+            position: absolute; width: 160px; text-align: center; color: #fff; font-weight: 600; font-size: 1rem;
+            transform: translateX(-50%); opacity: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+        }
+        .process-text p { font-size: 0.8rem; font-weight: 300; color: #ccc; margin-top: 5px; }
+        
+        .text-1 { top: 105%; left: 10%; }
+        .text-2 { top: 15%; left: 26%; }
+        .text-3 { top: -12%; left: 50%; }
+        .text-4 { top: 15%; left: 74%; }
+        .text-5 { top: 105%; left: 90%; }
+
+        /* --- CTA & Footer Styles --- */
+        .cta-section {
+            min-height: 40vh; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; padding: 50px 20px 100px;
+            position: relative; z-index: 20; text-align: center;
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #cc0000, #880000);
+            color: #fff; text-decoration: none;
+            padding: 18px 50px; border-radius: 40px;
+            font-size: 1.2rem; font-weight: 800; font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase; letter-spacing: 2px;
+            box-shadow: 0 10px 30px rgba(204,0,0,0.4);
+            transition: all 0.3s ease; border: 1px solid rgba(255,100,100,0.3);
+            cursor: pointer;
+        }
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(204,0,0,0.7);
+            background: linear-gradient(135deg, #e60000, #990000);
+        }
+        .site-footer {
+            background: #050505; border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 30px 20px; text-align: center; color: #666;
+            font-size: 0.9rem; letter-spacing: 1px; position: relative; z-index: 20;
+        }
+        .site-footer span { color: #cc0000; font-weight: 600; }
+
+        @media (max-width: 768px) {
+            .process-container { height: auto; display: flex; flex-direction: column; align-items: center; gap: 30px; }
+            .process-svg-wrapper { display: none; }
+            .process-node { position: relative; top: auto; left: auto; transform: scale(1); margin-bottom: 10px; }
+            .process-text { position: relative; top: auto; left: auto; transform: none; opacity: 1; width: 100%; margin-bottom: 30px; }
+        }
     </style>
 </head>
 <body>
@@ -207,7 +278,7 @@
             </div>
         </section>
 
-        <section class="content-section" style="padding-bottom: 150px;">
+        <section class="content-section">
             <h2 style="font-size: 3.5rem; margin-bottom: 40px; text-align: center; font-weight: 900;">Our <span>Features</span></h2>
             <div class="cards-container" style="max-width: 1400px;">
                 <div class="glass-card site-card animate-glass" style="padding: 40px 30px;">
@@ -224,8 +295,53 @@
                 </div>
             </div>
         </section>
-        
-        <div class="footer-space"></div>
+
+        <section class="content-section" style="padding-bottom: 50px;">
+            <div class="glass-card animate-glass" style="max-width: 1100px; padding: 60px 40px 100px;">
+                <h2 style="margin-bottom: 10px;">Our <span>Methodology</span></h2>
+                <p style="margin-bottom: 50px;">A streamlined process from concept to conversion.</p>
+                
+                <div class="process-container">
+                    <svg class="process-svg-wrapper" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <path class="process-path" d="M 10 90 Q 50 -10 90 90"></path>
+                    </svg>
+
+                    <div class="process-node node-1 p-node">
+                        <svg viewBox="0 0 24 24"><path d="M4 2h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H13v3h3v2H8v-2h3v-3H4c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2zm0 2v12h16V4H4z"/></svg>
+                    </div>
+                    <div class="process-text text-1 p-text">Digital Screens<br><p>High-resolution OOH</p></div>
+
+                    <div class="process-node node-2 p-node">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm-1.88 9.54L7.5 8.92l1.41-1.41 1.21 1.21 3.54-3.54 1.41 1.41-4.95 4.95z"/></svg>
+                    </div>
+                    <div class="process-text text-2 p-text">Prime Locations<br><p>Strategic Placements</p></div>
+
+                    <div class="process-node node-3 p-node">
+                        <svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6A4.997 4.997 0 0 1 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg>
+                    </div>
+                    <div class="process-text text-3 p-text">Creative Idea<br><p>Smart Storytelling</p></div>
+
+                    <div class="process-node node-4 p-node">
+                        <svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+                    </div>
+                    <div class="process-text text-4 p-text">Airing & Time<br><p>12 Hours Consistency</p></div>
+
+                    <div class="process-node node-5 p-node">
+                        <svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/><path d="M2 20h20v2H2z"/></svg>
+                    </div>
+                    <div class="process-text text-5 p-text">Max ROI<br><p>Performance Analytics</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section animate-glass">
+            <h2 style="font-size: 3rem; margin-bottom: 30px; font-weight: 900;">Ready to go <span style="color: #cc0000;">Digital?</span></h2>
+            <a href="tel:03241133441" class="cta-button">Book a Slot Now</a>
+        </section>
+
+        <footer class="site-footer">
+            <p>&copy; 2026 <span>KB Enterprises</span>. All Rights Reserved.</p>
+        </footer>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -243,7 +359,7 @@
         const container = document.getElementById('webgl-container');
         const scene = new THREE.Scene();
         
-        scene.fog = new THREE.FogExp2('#0c0c0c', 0.006); 
+        scene.fog = new THREE.FogExp2('#0c0c0c', 0.005); 
         scene.background = new THREE.Color('#0a0a0a');
 
         const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -264,25 +380,25 @@
 
         // --- 2. ENVIRONMENT CREATION ---
         
-        // Road length increased to 1200 to match longer content
+        // Road extended for the entire scroll length
         const road = new THREE.Mesh(
-            new THREE.PlaneGeometry(35, 1200),
+            new THREE.PlaneGeometry(35, 1800),
             new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.6, metalness: 0.2 })
         );
         road.rotation.x = -Math.PI / 2;
-        road.position.set(0, -6, -400);
+        road.position.set(0, -6, -600);
         scene.add(road);
 
-        const centerLineGeo = new THREE.PlaneGeometry(0.3, 1200);
+        const centerLineGeo = new THREE.PlaneGeometry(0.3, 1800);
         const centerLineMat = new THREE.MeshBasicMaterial({ color: 0xffcc00 });
         const centerLine1 = new THREE.Mesh(centerLineGeo, centerLineMat);
         centerLine1.rotation.x = -Math.PI / 2;
-        centerLine1.position.set(-0.3, -5.98, -400);
+        centerLine1.position.set(-0.3, -5.98, -600);
         scene.add(centerLine1);
 
         const centerLine2 = new THREE.Mesh(centerLineGeo, centerLineMat);
         centerLine2.rotation.x = -Math.PI / 2;
-        centerLine2.position.set(0.3, -5.98, -400);
+        centerLine2.position.set(0.3, -5.98, -600);
         scene.add(centerLine2);
 
         // Buildings
@@ -291,7 +407,7 @@
             color: 0x0f0f0f, roughness: 0.4, metalness: 0.5, transparent: true, opacity: 0.9
         });
 
-        const buildingCount = 80;
+        const buildingCount = 120;
         for(let i=0; i<buildingCount; i++) {
             const b = new THREE.Mesh(buildingGeo, buildingMat);
             const w = 15 + Math.random() * 25;
@@ -301,7 +417,7 @@
             
             const isLeft = Math.random() > 0.5;
             const xOffset = (isLeft ? -1 : 1) * (30 + Math.random() * 40);
-            const zOffset = -(Math.random() * 1000) + 50;
+            const zOffset = -(Math.random() * 1500) + 50;
 
             b.position.set(xOffset, h/2 - 6, zOffset);
             scene.add(b);
@@ -309,9 +425,9 @@
 
         // Floating Particles
         const pGeo = new THREE.BufferGeometry();
-        const pArr = new Float32Array(2000 * 3);
-        for (let i = 0; i < 2000 * 3; i++) {
-            pArr[i] = (Math.random() - 0.5) * 150;
+        const pArr = new Float32Array(2500 * 3);
+        for (let i = 0; i < 2500 * 3; i++) {
+            pArr[i] = (Math.random() - 0.5) * 180;
         }
         pGeo.setAttribute('position', new THREE.BufferAttribute(pArr, 3));
         const particles = new THREE.Points(pGeo, new THREE.PointsMaterial({
@@ -347,8 +463,8 @@
         const poleGeo = new THREE.CylinderGeometry(0.25, 0.35, 14);
         const smdMats = [bodyMat, bodyMat, bodyMat, bodyMat, screenMat, bodyMat];
 
-        // Increased Screen count for longer page scroll (16 poles per side)
-        const smdCount = 16; 
+        // Screen count increased to cover the methodology and footer sections
+        const smdCount = 24; 
         const zSpacing = 60;
         const totalDepth = smdCount * zSpacing;
 
@@ -386,13 +502,10 @@
         const scrollData = { progress: 0 };
 
         gsap.to(scrollData, {
-            progress: 1,
-            ease: "none",
+            progress: 1, ease: "none",
             scrollTrigger: {
                 trigger: document.body,
-                start: "top top",
-                end: "bottom bottom",
-                scrub: 1.5
+                start: "top top", end: "bottom bottom", scrub: 1.5
             }
         });
 
@@ -406,17 +519,23 @@
                 { y: 80, opacity: 0, scale: 0.95 },
                 {
                     y: 0, opacity: 1, scale: 1, duration: 1.2, ease: "power3.out",
-                    scrollTrigger: {
-                        trigger: card,
-                        start: "top 85%",
-                        toggleActions: "play none none reverse"
-                    }
+                    scrollTrigger: { trigger: card, start: "top 85%", toggleActions: "play none none reverse" }
                 }
             );
         });
 
-        camera.position.set(0, START_Y, START_Z);
+        // Methodology Arc Animation Setup
+        let processTimeline = gsap.timeline({
+            scrollTrigger: {
+                trigger: ".process-container", start: "top 75%", toggleActions: "play none none reverse"
+            }
+        });
 
+        processTimeline.to(".process-path", { strokeDashoffset: 0, duration: 2, ease: "power2.inOut" });
+        processTimeline.to(".p-node", { scale: 1, duration: 0.6, ease: "back.out(1.7)", stagger: 0.2 }, "-=1.5");
+        processTimeline.to(".p-text", { y: 10, opacity: 1, duration: 0.5, stagger: 0.2 }, "-=1.5");
+
+        camera.position.set(0, START_Y, START_Z);
         const clock = new THREE.Clock();
 
         function animate() {
@@ -432,17 +551,17 @@
 
             const p = scrollData.progress;
 
-            // Adjusted phase timings since the page is longer
-            if (p <= 0.10) {
-                const phaseP = p / 0.10;
+            // Updated phase timings for the longer scroll
+            if (p <= 0.08) {
+                const phaseP = p / 0.08;
                 camera.position.x = 0;
                 camera.position.y = THREE.MathUtils.lerp(START_Y, START_Y * 0.5, phaseP);
                 camera.position.z = THREE.MathUtils.lerp(START_Z, START_Z - 10, phaseP);
                 camera.lookAt(0, 0, THREE.MathUtils.lerp(-10, -40, phaseP));
                 camera.rotation.z = 0;
             }
-            else if (p <= 0.25) {
-                const phaseP = (p - 0.10) / 0.15;
+            else if (p <= 0.20) {
+                const phaseP = (p - 0.08) / 0.12;
                 const eased = 1 - Math.pow(1 - phaseP, 3);
                 camera.position.x = 0;
                 camera.position.y = THREE.MathUtils.lerp(START_Y * 0.5, EYE_Y, eased);
@@ -451,12 +570,12 @@
                 camera.rotation.z = 0;
             }
             else {
-                const phaseP = (p - 0.25) / 0.75;
+                const phaseP = (p - 0.20) / 0.80;
                 camera.position.z = THREE.MathUtils.lerp(START_Z - 25, END_Z, phaseP);
-                camera.position.y = EYE_Y + Math.sin(phaseP * Math.PI * 6) * 0.4;
-                camera.position.x = Math.sin(phaseP * Math.PI * 3) * 2;
+                camera.position.y = EYE_Y + Math.sin(phaseP * Math.PI * 8) * 0.4;
+                camera.position.x = Math.sin(phaseP * Math.PI * 4) * 2;
                 camera.lookAt(camera.position.x * 0.1, EYE_Y, camera.position.z - 30);
-                camera.rotation.z = Math.sin(phaseP * Math.PI * 3) * -0.02;
+                camera.rotation.z = Math.sin(phaseP * Math.PI * 4) * -0.02;
             }
 
             composer.render();
