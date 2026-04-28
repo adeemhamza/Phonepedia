@@ -3,79 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KB Advertisers | FPV Digital Highway</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+    <title>KB Advertisers | Premium Digital Highway</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: #080808; color: #fff; overflow-x: hidden; overscroll-behavior: none; }
-        h1, h2, h3, .logo, .screen-count { font-family: 'Montserrat', sans-serif; text-transform: uppercase; }
+        body { background: #0a0a0a; color: #fff; overflow-x: hidden; overscroll-behavior: none; }
+        h1, h2, h3, h4, .logo, .screen-count { font-family: 'Montserrat', sans-serif; text-transform: uppercase; }
+        
+        /* Navigation */
         nav {
-            position: fixed; top: 0; width: 100%; padding: 24px 50px;
+            position: fixed; top: 0; width: 100%; padding: 30px 50px;
             display: flex; justify-content: space-between; align-items: center;
-            z-index: 100; background: linear-gradient(to bottom, rgba(8,8,8,0.9), transparent);
+            z-index: 100; background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent);
         }
-        .logo { font-size: 1.5rem; font-weight: 900; letter-spacing: 2px; }
-        .logo span { color: #cc0000; text-shadow: 0 0 15px rgba(204,0,0,0.8); }
+        .logo { font-size: 1.8rem; font-weight: 900; letter-spacing: 3px; }
+        .logo span { color: #cc0000; text-shadow: 0 0 20px rgba(204,0,0,0.8); }
+
+        /* WebGL Background */
         #webgl-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; pointer-events: none; }
-        .scroll-content { position: relative; z-index: 10; }
+        .scroll-content { position: relative; z-index: 10; display: flex; flex-direction: column; }
+
+        /* Hero Section */
         .hero {
             height: 100vh; display: flex; flex-direction: column;
             justify-content: center; align-items: center; text-align: center;
             pointer-events: none; padding: 0 5vw;
         }
-        .hero h1 { font-size: 6.5vw; font-weight: 900; line-height: 1; letter-spacing: -0.02em; text-shadow: 0 10px 40px rgba(0,0,0,0.9); max-width: 90vw; }
-        .hero h1 span { color: #cc0000; text-shadow: 0 0 40px rgba(204,0,0,0.6); }
-        .hero p { font-size: 1.2rem; color: #ccc; margin-top: 30px; letter-spacing: 3px; font-weight: 400; text-transform: uppercase; }
-        .scroll-spacer { height: 500vh; }
+        .hero h1 { font-size: 7vw; font-weight: 900; line-height: 0.95; letter-spacing: -0.02em; text-shadow: 0 10px 40px rgba(0,0,0,0.9); max-width: 90vw; }
+        .hero h1 span { color: #cc0000; text-shadow: 0 0 50px rgba(204,0,0,0.6); }
+        .hero p { font-size: 1.2rem; color: #ccc; margin-top: 30px; letter-spacing: 4px; font-weight: 400; text-transform: uppercase; }
+
+        /* Content Sections */
         .content-section {
-            background-color: #080808; padding: 120px 5vw; position: relative; z-index: 20;
-            border-top: 1px solid rgba(204,0,0,0.5); box-shadow: 0 -40px 80px rgba(0,0,0,1);
-            min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 100vh; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 100px 5vw;
+            position: relative; z-index: 20;
         }
-        .section-header { text-align: center; font-size: 3.5rem; margin-bottom: 80px; font-weight: 900; letter-spacing: -1px; }
-        .cards-container { display: flex; gap: 40px; max-width: 1200px; width: 100%; justify-content: center; flex-wrap: wrap; }
+
+        /* Liquid Glass Card Theme */
+        .glass-card {
+            background: rgba(20, 20, 20, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            border-left: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 60px 50px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255,255,255,0.03);
+            max-width: 900px; width: 100%;
+            text-align: center;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.7), inset 0 0 30px rgba(204,0,0,0.08);
+            border-color: rgba(204,0,0,0.4);
+        }
+        .glass-card h2 { font-size: 3rem; color: #fff; margin-bottom: 25px; letter-spacing: -1px; }
+        .glass-card h2 span { color: #cc0000; }
+        .glass-card p { font-size: 1.2rem; line-height: 1.8; color: #ddd; font-weight: 300; }
+
+        /* New Specs List for Details */
+        .specs-list { text-align: left; margin: 30px auto; color: #ccc; list-style: none; display: inline-block; font-size: 1.1rem; line-height: 1.8; }
+        .specs-list li { margin-bottom: 12px; padding-left: 30px; position: relative; font-weight: 300; }
+        .specs-list li b { color: #fff; font-weight: 500; }
+        .specs-list li::before { content: "►"; color: #cc0000; font-size: 0.9rem; position: absolute; left: 0; top: 2px; }
+
+        /* Pricing Box */
+        .price-container { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+        .price-box {
+            background: linear-gradient(135deg, rgba(204,0,0,0.2), rgba(0,0,0,0.5));
+            border: 1px solid rgba(204,0,0,0.5);
+            border-radius: 16px; padding: 25px 35px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            min-width: 250px;
+        }
+        .price-box h4 { font-size: 1rem; color: #aaa; letter-spacing: 2px; margin-bottom: 10px; }
+        .price-box span { font-size: 2.2rem; font-weight: 900; color: #fff; display: block; text-shadow: 0 0 15px rgba(204,0,0,0.8); }
+
+        /* Site Cards Grid (For small features / summaries) */
+        .cards-container { display: flex; gap: 40px; max-width: 1200px; width: 100%; justify-content: center; flex-wrap: wrap; margin-top: 40px; }
         .site-card {
-            background: #111; border: 1px solid rgba(255,255,255,0.08); border-radius: 20px;
-            padding: 70px 40px; flex: 1; min-width: 320px; max-width: 500px;
-            text-align: center; transition: all 0.5s cubic-bezier(0.2,0.8,0.2,1);
-            position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center;
+            flex: 1; min-width: 300px; max-width: 450px;
+            display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden;
         }
         .site-card::before {
             content: ""; position: absolute; inset: 0;
-            background: radial-gradient(circle at top, rgba(204,0,0,0.15), transparent 70%);
-            opacity: 0; transition: 0.5s;
+            background: radial-gradient(circle at top, rgba(204,0,0,0.25), transparent 70%);
+            opacity: 0; transition: 0.5s; z-index: 0; pointer-events: none;
         }
-        .site-card:hover { transform: translateY(-10px); border-color: rgba(204,0,0,0.6); box-shadow: 0 20px 50px rgba(0,0,0,1), 0 0 40px rgba(204,0,0,0.2); }
         .site-card:hover::before { opacity: 1; }
-        .screen-count { font-size: 6rem; color: #cc0000; line-height: 1; margin-bottom: 5px; z-index: 2; text-shadow: 0 0 30px rgba(204,0,0,0.5); }
-        .site-card p { color: #999; font-size: 1.1rem; z-index: 2; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 30px; font-weight: 500; }
-        .site-card h3 { font-size: 2.2rem; z-index: 2; color: #fff; line-height: 1.2; }
+        .screen-count { font-size: 5.5rem; color: #cc0000; line-height: 1; margin-bottom: 10px; z-index: 2; text-shadow: 0 0 30px rgba(204,0,0,0.6); }
+        .site-card p { color: #aaa; font-size: 1rem; z-index: 2; letter-spacing: 1px; font-weight: 300; }
+        .site-card h3 { font-size: 2rem; z-index: 2; color: #fff; line-height: 1.2; }
+        
+        .footer-space { height: 15vh; }
     </style>
 </head>
 <body>
-    <nav><div class="logo">KB <span>ADV</span></div></nav>
+    <nav><div class="logo">KB <span>ENTERPRISES</span></div></nav>
     <div id="webgl-container"></div>
+    
     <div class="scroll-content">
         <section class="hero">
-            <h1>Turning Roads Into<br><span>Digital Message</span></h1>
+            <h1>Turning Roads Into<br><span>Digital Highways</span></h1>
             <p>Scroll to begin the flight</p>
         </section>
-        <div class="scroll-spacer"></div>
+
         <section class="content-section">
-            <h2 class="section-header">Site Information</h2>
+            <div class="glass-card animate-glass">
+                <h2>About <span>Us</span></h2>
+                <p>KB Enterprises is the pioneer of digital streamer advertising in Gujranwala. With a clear vision to transform Out-of-Home (OOH) media, we bring innovation, technology, and creativity together to create impactful brand experiences. Our team is committed to delivering high-performance campaigns through dynamic digital streamer ads across key locations in the city.</p>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <div class="glass-card animate-glass">
+                <h2>What <span>We Do</span></h2>
+                <p>We help businesses move beyond traditional advertising by offering digital streamer solutions that stand out. From strategic planning to execution, we offer a complete suite of services to ensure your message reaches the right audience at the right time.</p>
+            </div>
+        </section>
+
+        <section class="content-section" style="padding-top: 50px; min-height: 80vh;">
             <div class="cards-container">
-                <div class="site-card">
-                    <div class="screen-count">70</div>
-                    <p>Screens</p>
-                    <h3>Flyover<br>Gujranwala</h3>
+                <div class="glass-card site-card animate-glass" style="padding: 50px 40px;">
+                    <h2 style="font-size: 2.5rem;">Our <span>Vision</span></h2>
+                    <p style="text-transform: none; text-align: center; font-size: 1.15rem; color: #ddd;">To make a fully digitalized hub for outdoor advertising — where every message is smart, stylish, and seen.</p>
                 </div>
-                <div class="site-card">
-                    <div class="screen-count">35</div>
-                    <p>Screens</p>
-                    <h3>Sialkot Road<br>Gujranwala</h3>
+                <div class="glass-card site-card animate-glass" style="padding: 50px 40px;">
+                    <h2 style="font-size: 2.5rem;">Our <span>Mission</span></h2>
+                    <p style="text-transform: none; text-align: center; font-size: 1.15rem; color: #ddd;">To build a future-ready outdoor advertising platform that gives brands the edge through digital innovation and creative storytelling.</p>
                 </div>
             </div>
         </section>
+
+        <section class="content-section">
+            <h2 style="font-size: 3.5rem; margin-bottom: 20px; font-weight: 900; text-align: center;">Site Locations</h2>
+            <div class="cards-container">
+                <div class="glass-card site-card animate-glass">
+                    <div class="screen-count">70</div>
+                    <p style="text-transform: uppercase; letter-spacing: 3px; font-weight: 500;">Screens</p>
+                    <h3>Flyover<br>Gujranwala</h3>
+                </div>
+                <div class="glass-card site-card animate-glass">
+                    <div class="screen-count">40</div>
+                    <p style="text-transform: uppercase; letter-spacing: 3px; font-weight: 500;">Screens</p>
+                    <h3>Satellite Town<br>Sialkot Road</h3>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <div class="glass-card animate-glass" style="max-width: 1000px;">
+                <h2 style="margin-bottom: 5px;">Satellite Town</h2>
+                <p style="text-transform: uppercase; letter-spacing: 3px; color: #cc0000; font-weight: 600; margin-bottom: 20px;">Sialkot Road Gujranwala</p>
+                
+                <ul class="specs-list">
+                    <li><b>40</b> Digital Pole Streamers</li>
+                    <li><b>12 Hours</b> per Day operations</li>
+                    <li><b>15 Sec</b> per Brand Ad</li>
+                    <li><b>480 Spots</b> Airing per Day</li>
+                    <li><b>Distance covered:</b> 1 KM (Approx)</li>
+                    <li><b>Side 1:</b> PSO Pump (opposite Jinnah Stadium) to Dastgir House</li>
+                    <li><b>Side 2:</b> Dastgir House to PSO Pump (Opposite Jinnah Stadium)</li>
+                </ul>
+
+                <div class="price-container">
+                    <div class="price-box">
+                        <h4>PER WEEK</h4>
+                        <span>160,000 PKR</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <div class="glass-card animate-glass" style="max-width: 1000px;">
+                <h2 style="margin-bottom: 5px;">Gujranwala Flyover</h2>
+                <p style="text-transform: uppercase; letter-spacing: 3px; color: #cc0000; font-weight: 600; margin-bottom: 20px;">Visible from Flyover and G.T Road</p>
+                
+                <ul class="specs-list">
+                    <li><b>70</b> Digital Pole Streamers (35 each side)</li>
+                    <li>Total Poles: <b>70</b> | Total Screens: <b>70</b></li>
+                    <li><b>12 Hours</b> per Day operations</li>
+                    <li><b>15 Sec</b> per Brand Ad</li>
+                    <li><b>960 Spots</b> Airing per Day (Minimum)</li>
+                    <li><b>Distance covered:</b> 1.9 Km (one way)</li>
+                    <li><b>Side 1:</b> Lahore to Islamabad - City flyover</li>
+                    <li><b>Side 2:</b> Islamabad to Lahore - City flyover</li>
+                </ul>
+
+                <div class="price-container">
+                    <div class="price-box">
+                        <h4>ONE SIDE (WEEKLY)</h4>
+                        <span>175,000 PKR</span>
+                    </div>
+                    <div class="price-box" style="border-color: #fff;">
+                        <h4 style="color: #ccc;">BOTH SIDES (WEEKLY)</h4>
+                        <span style="color: #cc0000; text-shadow: none;">325,000 PKR</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section" style="padding-bottom: 150px;">
+            <h2 style="font-size: 3.5rem; margin-bottom: 40px; text-align: center; font-weight: 900;">Platform <span>Features</span></h2>
+            <div class="cards-container" style="max-width: 1400px;">
+                <div class="glass-card site-card animate-glass" style="padding: 40px 30px;">
+                    <h3 style="margin-bottom: 15px;">Dual<br><span style="color:#cc0000;">Exposure</span></h3>
+                    <p>Captures both local traffic on GT Road and commuters crossing the flyover, ensuring maximum impression rates.</p>
+                </div>
+                <div class="glass-card site-card animate-glass" style="padding: 40px 30px;">
+                    <h3 style="margin-bottom: 15px;">Centrally<br><span style="color:#cc0000;">Located</span></h3>
+                    <p>Positioned in the absolute heart of Gujranwala for maximum reach across diverse demographic segments.</p>
+                </div>
+                <div class="glass-card site-card animate-glass" style="padding: 40px 30px;">
+                    <h3 style="margin-bottom: 15px;">Highest<br><span style="color:#cc0000;">Traffic Flow</span></h3>
+                    <p>Guarantees consistent visibility due to heavy daily traffic movement throughout operating hours.</p>
+                </div>
+            </div>
+        </section>
+        
+        <div class="footer-space"></div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -89,91 +239,122 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <script>
+        // --- 1. SCENE SETUP ---
         const container = document.getElementById('webgl-container');
         const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2('#111111', 0.008);
-        scene.background = new THREE.Color('#101010');
+        
+        scene.fog = new THREE.FogExp2('#0c0c0c', 0.006); 
+        scene.background = new THREE.Color('#0a0a0a');
 
         const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.toneMapping = THREE.ReinhardToneMapping;
-        renderer.toneMappingExposure = 1.5;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping; 
+        renderer.toneMappingExposure = 1.3;
         container.appendChild(renderer.domElement);
 
         const composer = new THREE.EffectComposer(renderer);
         composer.addPass(new THREE.RenderPass(scene, camera));
-        const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.2, 0.4, 0.3);
+        const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.2, 0.4, 0.2);
         composer.addPass(bloomPass);
 
-        scene.add(new THREE.HemisphereLight(0xffffff, 0x555555, 1.2));
-        scene.add(new THREE.AmbientLight(0xffffff, 1.0));
+        scene.add(new THREE.HemisphereLight(0x555555, 0x111111, 1.2));
+        scene.add(new THREE.AmbientLight(0x333333, 1.0));
 
-        // Road
+        // --- 2. ENVIRONMENT CREATION ---
+        
+        // Road length increased to 1200 to match longer content
         const road = new THREE.Mesh(
-            new THREE.PlaneGeometry(30, 600),
-            new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.8, metalness: 0.2 })
+            new THREE.PlaneGeometry(35, 1200),
+            new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.6, metalness: 0.2 })
         );
         road.rotation.x = -Math.PI / 2;
-        road.position.set(0, -6, -150);
+        road.position.set(0, -6, -400);
         scene.add(road);
 
-        const divider = new THREE.Mesh(
-            new THREE.BoxGeometry(0.8, 0.6, 600),
-            new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.9 })
-        );
-        divider.position.set(0, -5.7, -150);
-        scene.add(divider);
+        const centerLineGeo = new THREE.PlaneGeometry(0.3, 1200);
+        const centerLineMat = new THREE.MeshBasicMaterial({ color: 0xffcc00 });
+        const centerLine1 = new THREE.Mesh(centerLineGeo, centerLineMat);
+        centerLine1.rotation.x = -Math.PI / 2;
+        centerLine1.position.set(-0.3, -5.98, -400);
+        scene.add(centerLine1);
 
-        const lineMat = new THREE.MeshBasicMaterial({ color: 0xffcc00 });
-        const lineGeo = new THREE.PlaneGeometry(0.15, 600);
-        [-0.8, 0.8].forEach(x => {
-            const l = new THREE.Mesh(lineGeo, lineMat);
-            l.rotation.x = -Math.PI / 2;
-            l.position.set(x, -5.98, -150);
-            scene.add(l);
+        const centerLine2 = new THREE.Mesh(centerLineGeo, centerLineMat);
+        centerLine2.rotation.x = -Math.PI / 2;
+        centerLine2.position.set(0.3, -5.98, -400);
+        scene.add(centerLine2);
+
+        // Buildings
+        const buildingGeo = new THREE.BoxGeometry(1, 1, 1);
+        const buildingMat = new THREE.MeshStandardMaterial({
+            color: 0x0f0f0f, roughness: 0.4, metalness: 0.5, transparent: true, opacity: 0.9
         });
 
-        // Particles
+        const buildingCount = 80;
+        for(let i=0; i<buildingCount; i++) {
+            const b = new THREE.Mesh(buildingGeo, buildingMat);
+            const w = 15 + Math.random() * 25;
+            const h = 30 + Math.random() * 80;
+            const d = 15 + Math.random() * 25;
+            b.scale.set(w, h, d);
+            
+            const isLeft = Math.random() > 0.5;
+            const xOffset = (isLeft ? -1 : 1) * (30 + Math.random() * 40);
+            const zOffset = -(Math.random() * 1000) + 50;
+
+            b.position.set(xOffset, h/2 - 6, zOffset);
+            scene.add(b);
+        }
+
+        // Floating Particles
         const pGeo = new THREE.BufferGeometry();
-        const pArr = new Float32Array(1500 * 3);
-        for (let i = 0; i < 1500 * 3; i++) pArr[i] = (Math.random() - 0.5) * 80;
+        const pArr = new Float32Array(2000 * 3);
+        for (let i = 0; i < 2000 * 3; i++) {
+            pArr[i] = (Math.random() - 0.5) * 150;
+        }
         pGeo.setAttribute('position', new THREE.BufferAttribute(pArr, 3));
         const particles = new THREE.Points(pGeo, new THREE.PointsMaterial({
-            size: 0.05, color: 0xcc0000, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending
+            size: 0.05, color: 0xff3333, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending
         }));
         scene.add(particles);
 
-        // Billboard materials
+        // Screens / Billboards
         const textureLoader = new THREE.TextureLoader();
-        const screenMat = new THREE.MeshStandardMaterial({
-            color: 0x111111, emissive: 0x555555, roughness: 0.1, metalness: 0.9
-        });
-        textureLoader.load('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=512&h=1024&auto=format&fit=crop', (tex) => {
+        const screenMat = new THREE.MeshStandardMaterial({ color: 0x222222, emissive: 0x555555, roughness: 0.1, metalness: 0.8 });
+        
+        let screenTexture = null;
+
+        textureLoader.load('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1024&h=1024&auto=format&fit=crop', (tex) => {
             tex.generateMipmaps = true;
             tex.minFilter = THREE.LinearMipmapLinearFilter;
+            tex.wrapS = THREE.RepeatWrapping;
+            tex.wrapT = THREE.RepeatWrapping;
+            tex.repeat.set(1, 1);
+            
             screenMat.map = tex;
             screenMat.emissiveMap = tex;
             screenMat.emissiveIntensity = 2.0;
             screenMat.color.setHex(0xffffff);
             screenMat.needsUpdate = true;
-        });
-        const bodyMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.8 });
-        const poleMat = new THREE.MeshStandardMaterial({ color: 0x444444, metalness: 0.9, roughness: 0.2 });
 
+            screenTexture = tex; 
+        });
+
+        const bodyMat = new THREE.MeshStandardMaterial({ color: 0x151515, roughness: 0.7 });
+        const poleMat = new THREE.MeshStandardMaterial({ color: 0x444444, metalness: 0.8, roughness: 0.3 });
         const smdGeo = new THREE.BoxGeometry(3, 6, 0.3);
         const poleGeo = new THREE.CylinderGeometry(0.25, 0.35, 14);
-        const armGeo = new THREE.CylinderGeometry(0.1, 0.1, 4);
         const smdMats = [bodyMat, bodyMat, bodyMat, bodyMat, screenMat, bodyMat];
 
-        const smdCount = 4;
-        const zSpacing = 50;
+        // Increased Screen count for longer page scroll (16 poles per side)
+        const smdCount = 16; 
+        const zSpacing = 60;
         const totalDepth = smdCount * zSpacing;
 
         for (let i = 0; i < smdCount; i++) {
             const zPos = -(i * zSpacing) - 20;
-            [{ x: -10.5, left: true }, { x: 10.5, left: false }].forEach(({ x, left }) => {
+            [{ x: -11.5, left: true }, { x: 11.5, left: false }].forEach(({ x, left }) => {
                 const g = new THREE.Group();
                 g.position.set(x, 0, zPos);
 
@@ -186,118 +367,100 @@
                 screen.rotation.y = left ? Math.PI / 10 : -Math.PI / 10;
                 g.add(screen);
 
-                const spot = new THREE.SpotLight(0xffffff, 2.0, 25, Math.PI / 5, 0.5, 1);
-                spot.position.set(0, -3, 4);
-                spot.target = screen;
-                g.add(spot);
-
-                const glow = new THREE.PointLight(0xcc0000, 1.0, 20);
-                glow.position.set(left ? 1 : -1, 1.5, 2);
+                const glow = new THREE.PointLight(0xcc0000, 1.2, 30);
+                glow.position.set(left ? 2 : -2, 1.5, 3);
                 g.add(glow);
-
-                const aDir = left ? 1 : -1;
-                const arm = new THREE.Mesh(armGeo, poleMat);
-                arm.rotation.z = Math.PI / 2;
-                arm.position.set(aDir * 2, 7.8, -0.4);
-                g.add(arm);
-
-                const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.15), new THREE.MeshBasicMaterial({ color: 0xffffff }));
-                bulb.position.set(aDir * 3.8, 7.7, -0.4);
-                g.add(bulb);
-
-                const sl = new THREE.SpotLight(0xffeedd, 1.0, 50, Math.PI / 4, 0.6, 2);
-                sl.position.set(aDir * 3.8, 7.7, -0.4);
-                const tgt = new THREE.Object3D();
-                tgt.position.set(aDir * 5, -6, 0);
-                g.add(tgt);
-                sl.target = tgt;
-                g.add(sl);
 
                 scene.add(g);
             });
         }
 
-        // Camera motion:
-        // Phase 1 (0.00 → 0.25): Bird's eye, high altitude, looking down
-        // Phase 2 (0.25 → 0.55): Smooth descent to eye-level
-        // Phase 3 (0.55 → 1.00): Eye-level forward flight, gentle cinematic drift
-
-        const START_Y  = 80;
-        const EYE_Y    = -1;
-        const START_Z  = 5;
-        const END_Z    = -(totalDepth - 10);
-
+        // --- 3. ANIMATIONS & GSAP ---
         gsap.registerPlugin(ScrollTrigger);
+
+        const START_Y  = 90;
+        const EYE_Y    = -1;
+        const START_Z  = 15;
+        const END_Z    = -(totalDepth - 40);
+        
         const scrollData = { progress: 0 };
 
         gsap.to(scrollData, {
             progress: 1,
             ease: "none",
             scrollTrigger: {
-                trigger: ".scroll-spacer",
+                trigger: document.body,
                 start: "top top",
                 end: "bottom bottom",
-                scrub: 2.5
+                scrub: 1.5
             }
         });
 
         gsap.to(".hero", {
-            opacity: 0, y: -50,
-            scrollTrigger: {
-                trigger: ".scroll-spacer",
-                start: "top top", end: "8% top", scrub: true
-            }
+            opacity: 0, y: -80,
+            scrollTrigger: { trigger: "body", start: "1% top", end: "10% top", scrub: true }
         });
 
-        gsap.from(".site-card", {
-            scrollTrigger: { trigger: ".content-section", start: "top 75%" },
-            y: 80, opacity: 0, duration: 1, stagger: 0.2, ease: "power3.out"
+        gsap.utils.toArray('.animate-glass').forEach(card => {
+            gsap.fromTo(card, 
+                { y: 80, opacity: 0, scale: 0.95 },
+                {
+                    y: 0, opacity: 1, scale: 1, duration: 1.2, ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: card,
+                        start: "top 85%",
+                        toggleActions: "play none none reverse"
+                    }
+                }
+            );
         });
 
         camera.position.set(0, START_Y, START_Z);
-        camera.lookAt(0, 0, -20);
 
         const clock = new THREE.Clock();
 
         function animate() {
             requestAnimationFrame(animate);
             const t = clock.getElapsedTime();
-            particles.rotation.y = t * 0.04;
+            
+            if (screenTexture) {
+                screenTexture.offset.y -= 0.003; 
+                screenTexture.offset.x -= 0.001; 
+            }
+
+            particles.rotation.y = t * 0.02;
 
             const p = scrollData.progress;
 
-            if (p <= 0.25) {
-                // Phase 1: Bird's eye
-                const phaseP = p / 0.25;
+            // Adjusted phase timings since the page is longer
+            if (p <= 0.10) {
+                const phaseP = p / 0.10;
                 camera.position.x = 0;
-                camera.position.y = THREE.MathUtils.lerp(START_Y, START_Y * 0.6, phaseP);
-                camera.position.z = THREE.MathUtils.lerp(START_Z, START_Z - 5, phaseP);
-                camera.lookAt(0, 0, THREE.MathUtils.lerp(-10, -30, phaseP));
+                camera.position.y = THREE.MathUtils.lerp(START_Y, START_Y * 0.5, phaseP);
+                camera.position.z = THREE.MathUtils.lerp(START_Z, START_Z - 10, phaseP);
+                camera.lookAt(0, 0, THREE.MathUtils.lerp(-10, -40, phaseP));
                 camera.rotation.z = 0;
             }
-            else if (p <= 0.55) {
-                // Phase 2: Descent
-                const phaseP = (p - 0.25) / 0.30;
+            else if (p <= 0.25) {
+                const phaseP = (p - 0.10) / 0.15;
                 const eased = 1 - Math.pow(1 - phaseP, 3);
                 camera.position.x = 0;
-                camera.position.y = THREE.MathUtils.lerp(START_Y * 0.6, EYE_Y, eased);
-                camera.position.z = THREE.MathUtils.lerp(START_Z - 5, START_Z - 15, eased);
-                camera.lookAt(0, THREE.MathUtils.lerp(-5, EYE_Y, eased), THREE.MathUtils.lerp(-30, camera.position.z - 20, eased));
+                camera.position.y = THREE.MathUtils.lerp(START_Y * 0.5, EYE_Y, eased);
+                camera.position.z = THREE.MathUtils.lerp(START_Z - 10, START_Z - 25, eased);
+                camera.lookAt(0, THREE.MathUtils.lerp(-10, EYE_Y, eased), THREE.MathUtils.lerp(-40, camera.position.z - 30, eased));
                 camera.rotation.z = 0;
             }
             else {
-                // Phase 3: Eye-level forward flight
-                const phaseP = (p - 0.55) / 0.45;
-                camera.position.z = THREE.MathUtils.lerp(START_Z - 15, END_Z, phaseP);
-                camera.position.y = EYE_Y + Math.sin(phaseP * Math.PI * 2) * 0.3;
-                camera.position.x = Math.sin(phaseP * Math.PI * 1.5) * 1.5;
-                camera.lookAt(camera.position.x * 0.2, EYE_Y, camera.position.z - 20);
-                camera.rotation.z = Math.sin(phaseP * Math.PI * 1.5) * -0.03;
+                const phaseP = (p - 0.25) / 0.75;
+                camera.position.z = THREE.MathUtils.lerp(START_Z - 25, END_Z, phaseP);
+                camera.position.y = EYE_Y + Math.sin(phaseP * Math.PI * 6) * 0.4;
+                camera.position.x = Math.sin(phaseP * Math.PI * 3) * 2;
+                camera.lookAt(camera.position.x * 0.1, EYE_Y, camera.position.z - 30);
+                camera.rotation.z = Math.sin(phaseP * Math.PI * 3) * -0.02;
             }
 
             composer.render();
         }
-
         animate();
 
         window.addEventListener('resize', () => {
