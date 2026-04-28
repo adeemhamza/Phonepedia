@@ -3,281 +3,388 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Futuristic Editor - Glassmorphism</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+    <title>KB Advertisers | Well-Lit Highway</title>
     <style>
-        /* Base Reset & Background */
+        :root {
+            var(--bg-color): #050505;
+            --royal-red: #cc0000;
+            --text-light: #ffffff;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Rajdhani', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
         }
 
         body {
-            /* Futuristic glowing background */
-            background: radial-gradient(circle at 15% 50%, #1a0b2e, #0f0c29, #24243e);
-            color: #fff;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            background-color: #050505;
+            color: var(--text-light);
+            overflow-x: hidden;
+            overscroll-behavior: none;
         }
 
-        /* Glassmorphism Utility Class */
-        .glass {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Top Navbar */
-        .navbar {
-            height: 60px;
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 24px 50px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 20px;
-            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
-            z-index: 10;
+            z-index: 100;
+            background: linear-gradient(to bottom, rgba(5,5,5,0.9), transparent);
         }
 
-        .navbar h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 20px;
-            color: #00e5ff;
-            text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: 3px; }
+        .logo span { color: var(--royal-red); text-shadow: 0 0 10px rgba(204,0,0,0.8); }
+
+        #webgl-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            pointer-events: none;
         }
 
-        .btn-export {
-            background: linear-gradient(45deg, #00e5ff, #0077ff);
-            border: none;
-            padding: 8px 20px;
-            border-radius: 20px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-            box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
-        }
+        .scroll-content { position: relative; z-index: 10; }
 
-        .btn-export:hover {
-            box-shadow: 0 0 25px rgba(0, 229, 255, 0.8);
-            transform: scale(1.05);
-        }
-
-        /* Main Workspace Layout */
-        .workspace {
-            display: flex;
-            flex: 1;
-            height: calc(100vh - 60px);
-        }
-
-        /* Sidebar (Tools) */
-        .sidebar {
-            width: 80px;
+        .hero {
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            padding: 20px 0;
-            gap: 20px;
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .tool-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #a0a0ff;
-            display: flex;
             justify-content: center;
             align-items: center;
-            cursor: pointer;
-            transition: 0.3s;
-            font-size: 12px;
-            flex-direction: column;
+            text-align: center;
+            pointer-events: none;
         }
 
-        .tool-btn:hover {
-            background: rgba(0, 229, 255, 0.1);
-            border-color: #00e5ff;
-            color: #00e5ff;
-            box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+        .hero h1 {
+            font-size: 7vw;
+            font-weight: 800;
+            line-height: 0.9;
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+            text-shadow: 0 10px 40px rgba(0,0,0,0.9);
         }
 
-        /* Canvas Area */
-        .canvas-container {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
+        .hero h1 span { color: var(--royal-red); text-shadow: 0 0 30px rgba(204,0,0,0.6); }
+        .hero p { font-size: 1.2rem; color: #aaa; margin-top: 20px; letter-spacing: 2px; text-transform: uppercase; }
+
+        .scroll-spacer { height: 350vh; }
+
+        .content-section {
+            background-color: #050505;
+            padding: 100px 5vw;
             position: relative;
+            z-index: 20;
+            border-top: 1px solid rgba(204, 0, 0, 0.4);
+            box-shadow: 0 -30px 60px rgba(0,0,0,1);
         }
 
-        /* The actual editing artboard */
-        .artboard {
-            width: 800px;
-            height: 500px;
-            background: rgba(255, 255, 255, 0.8); /* White canvas for editing */
-            border-radius: 10px;
+        .bento-header { text-align: center; font-size: 3.5rem; margin-bottom: 80px; font-weight: 800; letter-spacing: -1px; }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-auto-rows: 280px;
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .bento-item {
+            background: #0a0a0a;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
             position: relative;
             overflow: hidden;
-            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
-            transition: 0.3s;
         }
 
-        /* Right Panel (Properties) */
-        .properties-panel {
-            width: 250px;
-            padding: 20px;
-            border-left: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .properties-panel h3 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 14px;
-            margin-bottom: 15px;
-            color: #ff00ff;
-            text-shadow: 0 0 5px rgba(255, 0, 255, 0.4);
-        }
-
-        .prop-group {
-            margin-bottom: 15px;
-        }
-
-        .prop-group label {
-            display: block;
-            font-size: 12px;
-            margin-bottom: 5px;
-            color: #ccc;
-        }
-
-        .prop-group input[type="range"], .prop-group input[type="color"] {
-            width: 100%;
-            cursor: pointer;
-        }
-
-        /* Draggable Element inside Canvas */
-        .draggable-text {
+        .bento-item::before {
+            content: "";
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #333;
-            font-size: 24px;
-            font-family: Arial, sans-serif;
-            cursor: grab;
-            user-select: none;
-            padding: 5px;
-            border: 1px dashed transparent;
-        }
-        
-        .draggable-text:active {
-            cursor: grabbing;
+            inset: 0;
+            background: radial-gradient(circle at top left, rgba(204, 0, 0, 0.25), transparent 70%);
+            opacity: 0;
+            transition: 0.5s;
         }
 
-        .draggable-text:hover {
-            border-color: #00e5ff;
+        .bento-item:hover {
+            transform: translateY(-8px);
+            border-color: rgba(204, 0, 0, 0.8);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 1), 0 0 30px rgba(204, 0, 0, 0.3);
         }
+
+        .bento-item:hover::before { opacity: 1; }
+        .bento-item.large { grid-column: span 2; grid-row: span 2; }
+        .bento-item.tall { grid-row: span 2; }
+        .bento-item h3 { font-size: 2rem; margin-bottom: 15px; z-index: 2; color: #fff; }
+        .bento-item p { color: #888; font-size: 1.1rem; z-index: 2; line-height: 1.6; }
+
     </style>
 </head>
 <body>
 
-    <header class="navbar glass">
-        <h1>NEON.CANVAS</h1>
-        <button class="btn-export">Export Design</button>
-    </header>
+    <nav>
+        <div class="logo">KB <span>ADV</span></div>
+    </nav>
 
-    <div class="workspace">
-        
-        <aside class="sidebar glass">
-            <div class="tool-btn" onclick="addText()">
-                <span style="font-size: 20px; font-weight: bold;">T</span>
-                Text
-            </div>
-            <div class="tool-btn">
-                <span style="font-size: 20px;">⬛</span>
-                Shape
-            </div>
-            <div class="tool-btn">
-                <span style="font-size: 20px;">🖼️</span>
-                Image
-            </div>
-            <div class="tool-btn">
-                <span style="font-size: 20px;">✨</span>
-                AI
-            </div>
-        </aside>
+    <div id="webgl-container"></div>
 
-        <main class="canvas-container">
-            <div style="position: absolute; width: 300px; height: 300px; background: #00e5ff; filter: blur(150px); opacity: 0.2; top: 10%; left: 20%;"></div>
-            <div style="position: absolute; width: 300px; height: 300px; background: #ff00ff; filter: blur(150px); opacity: 0.2; bottom: 10%; right: 20%;"></div>
-            
-            <div class="artboard" id="artboard">
+    <div class="scroll-content">
+        <section class="hero">
+            <h1>Witness<br><span>The Glow</span></h1>
+            <p>Scroll to navigate the real network</p>
+        </section>
+
+        <div class="scroll-spacer"></div>
+
+        <section class="content-section">
+            <h2 class="bento-header">Brilliance in Every Pixel.</h2>
+            <div class="bento-grid">
+                <div class="bento-item large">
+                    <h3>Ultra Realistic Displays</h3>
+                    <p>Hamari 3x6 screens advanced post-processing glow technology utilize karti hain, jo digital screens par real LED screens jaisi intense roshni aur focus deliver karti hai.</p>
                 </div>
-        </main>
-
-        <aside class="properties-panel glass">
-            <h3>PROPERTIES</h3>
-            <div class="prop-group">
-                <label>Opacity</label>
-                <input type="range" min="0" max="100" value="100">
+                <div class="bento-item">
+                    <h3>Clear Visibility</h3>
+                    <p>Well-lit environments ensure karte hain ke aapka brand aur surrounding infrastructure dono clear nazar aayein.</p>
+                </div>
+                <div class="bento-item">
+                    <h3>Deep Visual Depth</h3>
+                    <p>Wider roads, physical divider aur floating particles extreme 3D immersive experience create karte karte hain.</p>
+                </div>
+                <div class="bento-item tall">
+                    <h3>Clean Professional UI</h3>
+                    <p>Data visualization ke liye sab se polished, Bento Box grid layout jo high-end corporate standard ke mutabiq hai.</p>
+                </div>
             </div>
-            <div class="prop-group">
-                <label>Blur (Glass Effect)</label>
-                <input type="range" min="0" max="50" value="0">
-            </div>
-            <div class="prop-group">
-                <label>Color</label>
-                <input type="color" value="#00e5ff">
-            </div>
-        </aside>
+        </section>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
     <script>
-        const artboard = document.getElementById('artboard');
+        // --- 1. SETUP ---
+        const container = document.getElementById('webgl-container');
+        const scene = new THREE.Scene();
+        
+        // Lighter, greyish fog so poles don't disappear completely
+        scene.fog = new THREE.FogExp2('#0a0a0a', 0.012); 
+        scene.background = new THREE.Color('#080808');
 
-        // Function to add a new text element to the canvas
-        function addText() {
-            const textElement = document.createElement('div');
-            textElement.className = 'draggable-text';
-            textElement.innerText = 'Futuristic Text';
-            textElement.contentEditable = true; // Make it editable
-            
-            // Basic Drag and Drop Logic
-            let isDragging = false;
-            let startX, startY, initialX, initialY;
+        const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.toneMapping = THREE.ReinhardToneMapping;
+        renderer.toneMappingExposure = 1.2; // Slightly increased exposure globally
+        container.appendChild(renderer.domElement);
 
-            textElement.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                startX = e.clientX;
-                startY = e.clientY;
-                initialX = textElement.offsetLeft;
-                initialY = textElement.offsetTop;
-                textElement.style.cursor = 'grabbing';
-            });
+        // --- POST PROCESSING SETUP ---
+        const composer = new THREE.EffectComposer(renderer);
+        composer.addPass(new THREE.RenderPass(scene, camera));
 
-            document.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-                const dx = e.clientX - startX;
-                const dy = e.clientY - startY;
-                textElement.style.left = `${initialX + dx}px`;
-                textElement.style.top = `${initialY + dy}px`;
-                textElement.style.transform = 'none'; // Remove center transform for dragging
-            });
+        // Bloom adjusted to play nice with brighter ambient light
+        const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.3);
+        composer.addPass(bloomPass);
 
-            document.addEventListener('mouseup', () => {
-                isDragging = false;
-                textElement.style.cursor = 'grab';
-            });
+        // --- 2. LIGHTING (INCREASED FOR VISIBILITY) ---
+        // Hemisphere light increased significantly to reveal poles and road
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.8);
+        scene.add(hemiLight);
+        
+        // Ambient light increased to wash away pure black shadows
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6); 
+        scene.add(ambientLight);
 
-            artboard.appendChild(textElement);
+        // --- 3. ENVIRONMENT ---
+        const roadGeo = new THREE.PlaneGeometry(30, 400);
+        const roadMat = new THREE.MeshStandardMaterial({ 
+            color: 0x151515, roughness: 0.8, metalness: 0.2 // Lighter road
+        });
+        const road = new THREE.Mesh(roadGeo, roadMat);
+        road.rotation.x = -Math.PI / 2;
+        road.position.set(0, -6, -100);
+        scene.add(road);
+
+        const dividerGeo = new THREE.BoxGeometry(0.8, 0.6, 400);
+        const dividerMat = new THREE.MeshStandardMaterial({ color: 0x2a2a2a, roughness: 0.9 }); // Lighter concrete
+        const divider = new THREE.Mesh(dividerGeo, dividerMat);
+        divider.position.set(0, -5.7, -100);
+        scene.add(divider);
+
+        const lineGeo = new THREE.PlaneGeometry(0.15, 400);
+        const lineMat = new THREE.MeshBasicMaterial({ color: 0xffcc00 }); // Brighter yellow lines
+        const leftYellowLine = new THREE.Mesh(lineGeo, lineMat);
+        leftYellowLine.rotation.x = -Math.PI / 2;
+        leftYellowLine.position.set(-0.8, -5.98, -100);
+        scene.add(leftYellowLine);
+        const rightYellowLine = new THREE.Mesh(lineGeo, lineMat);
+        rightYellowLine.rotation.x = -Math.PI / 2;
+        rightYellowLine.position.set(0.8, -5.98, -100);
+        scene.add(rightYellowLine);
+
+        // --- 4. FLOATING PARTICLES ---
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 1000;
+        const posArray = new Float32Array(particlesCount * 3);
+        for(let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 60; 
         }
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.05,
+            color: 0xcc0000,
+            transparent: true,
+            opacity: 0.6,
+            blending: THREE.AdditiveBlending
+        });
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        // --- 5. TEXTURES & MATERIALS ---
+        const textureLoader = new THREE.TextureLoader();
+        const adTextureUrl = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=512&h=1024&auto=format&fit=crop';
+        
+        const screenMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0x111111, 
+            emissive: 0x444444, 
+            roughness: 0.1, 
+            metalness: 0.9
+        });
+
+        textureLoader.load(adTextureUrl, (texture) => {
+            texture.generateMipmaps = true;
+            texture.minFilter = THREE.LinearMipmapLinearFilter;
+            screenMaterial.map = texture;
+            screenMaterial.emissiveMap = texture;
+            screenMaterial.emissiveIntensity = 2.5; 
+            screenMaterial.color.setHex(0xffffff);
+            screenMaterial.needsUpdate = true;
+        });
+
+        const bodyMaterial = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.8 }); // Lighter back casing
+        const poleMaterial = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.9, roughness: 0.2 }); // BRIGHTER METALLIC POLES
+        
+        const smdGeo = new THREE.BoxGeometry(3, 6, 0.3);
+        const poleGeo = new THREE.CylinderGeometry(0.25, 0.35, 14);
+        const armGeo = new THREE.CylinderGeometry(0.1, 0.1, 4);
+        const smdMaterials = [ bodyMaterial, bodyMaterial, bodyMaterial, bodyMaterial, screenMaterial, bodyMaterial ];
+
+        // --- 6. BUILD THE STRUCTURES ---
+        const smdCountPerSide = 3;
+        const zSpacing = 40; 
+        for(let i = 0; i < smdCountPerSide; i++) {
+            const zPos = -(i * zSpacing) - 20;
+            function createStructure(xPos, isLeft) {
+                const group = new THREE.Group();
+                group.position.set(xPos, 0, zPos);
+                
+                const pole = new THREE.Mesh(poleGeo, poleMaterial);
+                pole.position.set(0, 1, -0.4);
+                group.add(pole);
+                
+                const screen = new THREE.Mesh(smdGeo, smdMaterials);
+                screen.position.set(0, 1.5, 0); 
+                screen.rotation.y = isLeft ? Math.PI / 10 : -Math.PI / 10; 
+                group.add(screen);
+                
+                const focusSpotLight = new THREE.SpotLight(0xffffff, 2.0, 25, Math.PI/5, 0.5, 1);
+                focusSpotLight.position.set(0, -3, 4); 
+                focusSpotLight.target = screen;
+                group.add(focusSpotLight);
+                
+                const screenGlow = new THREE.PointLight(0xcc0000, 1.0, 20);
+                screenGlow.position.set(isLeft ? 1 : -1, 1.5, 2);
+                group.add(screenGlow);
+                
+                const armDir = isLeft ? 1 : -1;
+                const arm = new THREE.Mesh(armGeo, poleMaterial);
+                arm.rotation.z = Math.PI / 2;
+                arm.position.set(armDir * 2, 7.8, -0.4); 
+                group.add(arm);
+                
+                const bulbMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+                const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.15), bulbMat);
+                bulb.position.set(armDir * 3.8, 7.7, -0.4); 
+                group.add(bulb);
+                
+                const streetLight = new THREE.SpotLight(0xffeedd, 1.0, 50, Math.PI/4, 0.6, 2);
+                streetLight.position.set(armDir * 3.8, 7.7, -0.4);
+                const targetObj = new THREE.Object3D();
+                targetObj.position.set(armDir * 5, -6, 0); 
+                group.add(targetObj);
+                streetLight.target = targetObj;
+                group.add(streetLight);
+                
+                scene.add(group);
+            }
+            createStructure(-10.5, true);  
+            createStructure(10.5, false);  
+        }
+
+        // --- 7. CAMERA & ANIMATION ---
+        camera.position.set(0, -1, 10);
+        gsap.registerPlugin(ScrollTrigger);
+        const totalDepth = (smdCountPerSide * zSpacing);
+        
+        gsap.to(camera.position, {
+            z: -totalDepth + 10,
+            ease: "none",
+            scrollTrigger: {
+                trigger: ".scroll-spacer",
+                start: "top top",
+                end: "bottom bottom",
+                scrub: 1
+            }
+        });
+        
+        gsap.to(".hero", {
+            opacity: 0, y: -50,
+            scrollTrigger: {
+                trigger: ".scroll-spacer",
+                start: "top top", end: "15% top", scrub: true
+            }
+        });
+        
+        const clock = new THREE.Clock();
+        function animate() {
+            requestAnimationFrame(animate);
+            const elapsedTime = clock.getElapsedTime();
+            particlesMesh.rotation.y = elapsedTime * 0.05;
+            particlesMesh.rotation.x = elapsedTime * 0.02;
+
+            composer.render();
+        }
+        animate();
+        
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
+        });
     </script>
 </body>
 </html>
